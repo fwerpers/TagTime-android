@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -79,6 +80,13 @@ public class TPController extends SherlockActivity {
 				startPreferences();
 			}
 		});
+		TextView charts = (TextView) findViewById(R.id.ChartsLink);
+		charts.setClickable(true);
+		charts.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				startCharts();
+			}
+		});
 
 		boolean gotBeeminder = TimeProf.checkBeeminder();
 		TextView beeminder = (TextView) findViewById(R.id.BeeminderLink);
@@ -125,6 +133,10 @@ public class TPController extends SherlockActivity {
 		Intent goals = new Intent();
 		goals.setClass(this, ViewGoals.class);
 		startActivity(goals);
+	}
+
+	public void startCharts() {
+		Log.d("DEBUG","TEST");
 	}
 
 	public void setAlarm() {

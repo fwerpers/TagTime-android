@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.fwerpers.timeprof"
-        minSdkVersion 8
-        targetSdkVersion 8
+        minSdkVersion 9
+        targetSdkVersion 24
     }
 
     buildTypes {
@@ -21,5 +21,7 @@ android {
 dependencies {
     compile project(':library')
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:18.0.0'
+    compile "com.android.support:support-core-utils:25.4.0"
+    compile "com.android.support:support-v4:25.4.0"
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
 }
