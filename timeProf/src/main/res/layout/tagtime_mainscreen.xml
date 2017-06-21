@@ -115,6 +115,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dip"
-        android:src="@drawable/tagtime_01" />
+        android:src="@drawable/beeminder" />
 
 </LinearLayout>
