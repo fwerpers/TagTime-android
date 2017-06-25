@@ -17,12 +17,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Binder;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.fwerpers.timeprof.R;
@@ -157,14 +159,12 @@ public class PingService extends Service {
 
 		if (!mNotify) return;
 
-		NotificationManager NM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		SimpleDateFormat SDF = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
 		Date ping = new Date(pingtime * 1000);
-		CharSequence text = getText(R.string.status_bar_notes_ping_msg);
 
-		// Set the icon, scrolling text, and timestamp.
-		Notification note = new Notification(R.drawable.stat_ping, text, ping.getTime());
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
 		// The PendingIntent to launch our activity if the user selects this
 		// notification
@@ -174,11 +174,10 @@ public class PingService extends Service {
 		editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, editIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-		// Set the info for the views that show in the notification panel.
-		// note.setLatestEventInfo(context, contentTitle, contentText,
-		// contentIntent)
-		//note.setLatestEventInfo(this, "Ping!", SDF.format(ping), contentIntent);
+		mBuilder.setContentTitle("Ping!");
+		mBuilder.setContentText(simpleDateFormat.format(ping));
+		mBuilder.setSmallIcon(R.drawable.stat_ping);
+		mBuilder.setContentIntent(contentIntent);
 
 		boolean suppress_noises = false;
 		if (mPrefs.getBoolean("pingQuietCharging", false)) {
@@ -189,35 +188,29 @@ public class PingService extends Service {
 
 		if (!suppress_noises) {
 			if (mPrefs.getBoolean("pingVibrate", true)) {
-				note.vibrate = new long[] { 0, 200, 50, 100, 50, 200, 50, 200, 50, 100 };
+				//note.vibrate = new long[] { 0, 200, 50, 100, 50, 200, 50, 200, 50, 100 };
+				mBuilder.setVibrate(new long[] { 0, 200, 50, 100, 50, 200, 50, 200, 50, 100 });
 			}
 			String sound_uri = mPrefs
 					.getString("pingRingtonePref", Settings.System.DEFAULT_NOTIFICATION_URI.toString());
 			if (!sound_uri.equals("")) {
-				note.sound = Uri.parse(sound_uri);
+				//note.sound = Uri.parse(sound_uri);
+				mBuilder.setSound(Uri.parse(sound_uri));
 			} else {
 				// "Silent" choice returns uri="", so no defaults
-				note.defaults = 0;
+				mBuilder.setDefaults(0);
 				// note.defaults |= Notification.DEFAULT_SOUND;
 			}
 		}
 
 		if (mPrefs.getBoolean("pingLedFlash", false)) {
-			note.ledARGB = 0xff0033ff;
-			note.ledOffMS = 1000;
-			note.ledOnMS = 200;
-			note.flags |= Notification.FLAG_SHOW_LIGHTS;
+			mBuilder.setLights(0xff0033ff, 200, 1000);
 		}
 
-		note.flags |= Notification.FLAG_AUTO_CANCEL;
+		mBuilder.setAutoCancel(true);
 
-		// And finally, send the notification. The PING_NOTES const is a unique
-		// id
-		// that gets assigned to the notification (we happen to pull it from a
-		// layout id
-		// so that we can cancel the notification later on).
-		NM.notify(PING_NOTES, note);
-
+		// The layout ID is used the notification ID
+		notificationManager.notify(PING_NOTES, mBuilder.build());
 	}
 
 	// TODO: RTC_WAKEUP and appropriate perms into manifest
