@@ -80,11 +80,13 @@ public class PingService extends Service {
 		SEED = mPrefs.getLong(KEY_SEED, -1);
 
 		try {
-			mGap = Integer.parseInt(mPrefs.getString("pingGap", "45"));
+			mGap = Integer.parseInt(mPrefs.getString("pingGap", "5"));
 		} catch (NumberFormatException e) {
 			Log.w(TAG, "onCreate: Invalid gap: " + mPrefs.getString("pingGap", "not set"));
-			mGap = 45;
+			mGap = 5;
 		}
+
+		//mGap = 5;
 
 		// First do a quick check to see if next ping is still in the future...
 		if (NEXT > launchTime) {
@@ -176,7 +178,7 @@ public class PingService extends Service {
 		// Set the info for the views that show in the notification panel.
 		// note.setLatestEventInfo(context, contentTitle, contentText,
 		// contentIntent)
-		note.setLatestEventInfo(this, "Ping!", SDF.format(ping), contentIntent);
+		//note.setLatestEventInfo(this, "Ping!", SDF.format(ping), contentIntent);
 
 		boolean suppress_noises = false;
 		if (mPrefs.getBoolean("pingQuietCharging", false)) {

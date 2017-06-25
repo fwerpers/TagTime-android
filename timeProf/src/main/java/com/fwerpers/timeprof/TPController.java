@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -14,12 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-
 import com.fwerpers.timeprof.R;
 
-public class TPController extends SherlockActivity {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class TPController extends AppCompatActivity {
 	private ToggleButton tog;
 	private SharedPreferences mSettings;
 
@@ -36,7 +39,9 @@ public class TPController extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tagtime_mainscreen);
 
-        mAction = getSupportActionBar();
+
+
+		mAction = getSupportActionBar();
         mAction.setHomeButtonEnabled( false );
         mAction.setIcon( R.drawable.tagtime_03 );
 
@@ -87,28 +92,33 @@ public class TPController extends SherlockActivity {
 				startCharts();
 			}
 		});
+		TextView nextPing = (TextView) findViewById(R.id.NextPing);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
+		Long nextPingTime = mSettings.getLong(PingService.KEY_NEXT, -1);
+		Date pingDate = new Date(nextPingTime * 1000);
+		nextPing.setText(sdf.format(pingDate));
 
-		boolean gotBeeminder = TimeProf.checkBeeminder();
-		TextView beeminder = (TextView) findViewById(R.id.BeeminderLink);
-		beeminder.setClickable(true);
-		if (gotBeeminder) {
-			beeminder.setOnClickListener(new OnClickListener() {
-				public void onClick(View arg0) {
-					startBeeminderLinks();
-				}
-			});
-		} else {
-			beeminder.setOnClickListener(new OnClickListener() {
-				public void onClick(View arg0) {
-					Toast toast = Toast.makeText(TPController.this,
-							"You must install the Beeminder app to use this feature", Toast.LENGTH_SHORT);
-					TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-					if (v != null) v.setGravity(Gravity.CENTER);
-					toast.show();
-
-				}
-			});
-		}
+//		boolean gotBeeminder = TimeProf.checkBeeminder();
+//		TextView beeminder = (TextView) findViewById(R.id.BeeminderLink);
+//		beeminder.setClickable(true);
+//		if (gotBeeminder) {
+//			beeminder.setOnClickListener(new OnClickListener() {
+//				public void onClick(View arg0) {
+//					startBeeminderLinks();
+//				}
+//			});
+//		} else {
+//			beeminder.setOnClickListener(new OnClickListener() {
+//				public void onClick(View arg0) {
+//					Toast toast = Toast.makeText(TPController.this,
+//							"You must install the Beeminder app to use this feature", Toast.LENGTH_SHORT);
+//					TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+//					if (v != null) v.setGravity(Gravity.CENTER);
+//					toast.show();
+//
+//				}
+//			});
+//		}
 	}
 
 	public void startExport() {
@@ -129,11 +139,11 @@ public class TPController extends SherlockActivity {
 		startActivity(pref);
 	}
 
-	public void startBeeminderLinks() {
-		Intent goals = new Intent();
-		goals.setClass(this, ViewGoals.class);
-		startActivity(goals);
-	}
+//	public void startBeeminderLinks() {
+//		Intent goals = new Intent();
+//		goals.setClass(this, ViewGoals.class);
+//		startActivity(goals);
+//	}
 
 	public void startCharts() {
 		Log.d("DEBUG","TEST");

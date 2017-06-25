@@ -9,14 +9,14 @@ import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.preference.PreferenceActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.fwerpers.timeprof.R;
 
-public class Preferences extends SherlockPreferenceActivity {
+public class Preferences extends PreferenceActivity {
 
 	private ActionBar mAction;
 	
@@ -28,9 +28,9 @@ public class Preferences extends SherlockPreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 
-		mAction = getSupportActionBar();
-		mAction.setHomeButtonEnabled(true);
-		mAction.setIcon(R.drawable.tagtime_03);
+//		mAction = getSupportActionBar();
+//		mAction.setHomeButtonEnabled(true);
+//		mAction.setIcon(R.drawable.tagtime_03);
 
 		ListPreference order = (ListPreference) findPreference("sortOrderPref");
 

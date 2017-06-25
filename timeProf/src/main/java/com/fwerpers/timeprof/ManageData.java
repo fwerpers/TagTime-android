@@ -20,18 +20,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import com.fwerpers.timeprof.R;
 
-public class ManageData extends SherlockActivity {
+public class ManageData extends AppCompatActivity {
 	public static final String TAG = "TPManageData";
 	private PingsDbAdapter mDb;
 	private BeeminderDbAdapter mBeeDb;

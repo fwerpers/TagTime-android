@@ -90,24 +90,24 @@
             android:textColor="#ffffff"
             android:textSize="20sp" />
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="5dip"
-            android:layout_marginTop="5dip"
-            android:background="#DFDFDF" />
+        <!--<View-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="1px"-->
+            <!--android:layout_marginBottom="5dip"-->
+            <!--android:layout_marginTop="5dip"-->
+            <!--android:background="#DFDFDF" />-->
 
-        <TextView
-            android:id="@+id/BeeminderLink"
-            android:layout_width="200dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:padding="5dip"
-            android:background="@xml/menu_selector"
-            android:text="Link to Beeminder"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/BeeminderLink"-->
+            <!--android:layout_width="200dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:gravity="center"-->
+            <!--android:padding="5dip"-->
+            <!--android:background="@xml/menu_selector"-->
+            <!--android:text="Link to Beeminder"-->
+            <!--android:textColor="#ffffff"-->
+            <!--android:textSize="20sp" />-->
 
         <View
             android:layout_width="fill_parent"
@@ -127,13 +127,31 @@
             android:text="Charts"
             android:textColor="#ffffff"
             android:textSize="20sp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#DFDFDF" />
+
+        <TextView
+            android:id="@+id/NextPing"
+            android:layout_width="200dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:padding="5dip"
+            android:text="Charts"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dip"
-        android:src="@drawable/beeminder" />
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="20dip"-->
+        <!--android:src="@drawable/beeminder" />-->
 
 </LinearLayout>

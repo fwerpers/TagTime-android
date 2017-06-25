@@ -33,7 +33,7 @@
     <string name="editgoal_tags">Select Tags</string>
     <string name="editgoal_notags">You must select at least one tag!</string>
     <string name="editgoal_nogoal">You must select a valid goal!</string>
-    
+
     <string name="app_title">TimeProf</string>
     <string name="managedata_title">TagTime Manage Data</string>
     <string name="viewlog_title">TagTime Ping Log</string>
@@ -43,10 +43,10 @@
     <string name="prefs_title">TagTime Preferences</string>
     <string name="about_title">TagTime for Android</string>
 
-	<string name="about_version">Version vvv build bbb</string>
-	<string name="about_text">TagTime is a stochastic sampler to measure what you spend your time on.\nhttp://messymatters.com/tagtime</string>
-	<string name="about_dismiss">Dismiss</string>
-	<string name="about_changelog">ChangeLog</string>
-	<string name="about_googleplay">Visit on Google Play</string>
+    <string name="about_version">Version vvv build bbb</string>
+    <string name="about_text">TagTime is a stochastic sampler to measure what you spend your time on.\nhttp://messymatters.com/tagtime</string>
+    <string name="about_dismiss">Dismiss</string>
+    <string name="about_changelog">ChangeLog</string>
+    <string name="about_googleplay">Visit on Google Play</string>
 
 </resources>

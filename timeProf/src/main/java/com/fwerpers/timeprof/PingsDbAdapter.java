@@ -155,7 +155,7 @@ public class PingsDbAdapter {
 								null);
 						Integer current_ping_id = 0;
 						ContentValues period_values = new ContentValues();
-						period_values.put(KEY_PERIOD, 45);
+						period_values.put(KEY_PERIOD, 5);
 
 						all_pings.moveToFirst();
 						while (!all_pings.isAfterLast()) {

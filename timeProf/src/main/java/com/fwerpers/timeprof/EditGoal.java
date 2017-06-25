@@ -11,16 +11,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.beeminder.beedroid.api.Session;
 import com.beeminder.beedroid.api.Session.SessionError;
 import com.beeminder.beedroid.api.Session.SessionException;
@@ -33,7 +33,7 @@ import com.fwerpers.timeprof.R;
 /* 2013.10.26 Uluc: If the activity is invoked with RowId = null, it will let the user 
  * select a number of tags and send them back to the invoking activity in the response. */
 
-public class EditGoal extends SherlockActivity {
+public class EditGoal extends AppCompatActivity {
 
 	private final static String TAG = "EditGoal";
 	private static final boolean LOCAL_LOGV = false && !TimeProf.DISABLE_LOGV;

@@ -17,8 +17,11 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,13 +30,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import com.fwerpers.timeprof.R;
 
-public class ViewLog extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ViewLog extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	private static final int ACTIVITY_EDIT = 0;
 	private static final String TAG = "ViewLog";

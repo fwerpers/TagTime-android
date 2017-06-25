@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,13 +19,9 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.MenuItem;
-
 import com.fwerpers.timeprof.R;
 
-public class ViewGoals extends SherlockListActivity {
+public class ViewGoals extends AppCompatActivity {
 
 	private static final int ACTIVITY_EDIT = 0;
 	private static final String TAG = "ViewGoals";
@@ -69,7 +68,7 @@ public class ViewGoals extends SherlockListActivity {
 				R.id.viewgoals_row_tags };
 		// Now create a simple cursor adapter and set it to display
 		GoalsCursorAdapter goals = new GoalsCursorAdapter(this, R.layout.tagtime_viewgoals_row, goalsCursor, from, to);
-		setListAdapter(goals);
+		//setListAdapter(goals);
 	}
 
 	private class GoalsCursorAdapter extends SimpleCursorAdapter {
@@ -114,13 +113,13 @@ public class ViewGoals extends SherlockListActivity {
 		}
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		Intent i = new Intent(this, EditGoal.class);
-		i.putExtra(PingsDbAdapter.KEY_ROWID, id);
-		startActivityForResult(i, ACTIVITY_EDIT);
-	}
+//	@Override
+//	protected void onListItemClick(ListView l, View v, int position, long id) {
+//		super.onListItemClick(l, v, position, id);
+//		Intent i = new Intent(this, EditGoal.class);
+//		i.putExtra(PingsDbAdapter.KEY_ROWID, id);
+//		startActivityForResult(i, ACTIVITY_EDIT);
+//	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
