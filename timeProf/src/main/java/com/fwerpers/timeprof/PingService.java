@@ -188,7 +188,6 @@ public class PingService extends Service {
 
 		if (!suppress_noises) {
 			if (mPrefs.getBoolean("pingVibrate", true)) {
-				//note.vibrate = new long[] { 0, 200, 50, 100, 50, 200, 50, 200, 50, 100 };
 				mBuilder.setVibrate(new long[] { 0, 200, 50, 100, 50, 200, 50, 200, 50, 100 });
 			}
 			String sound_uri = mPrefs
@@ -209,7 +208,7 @@ public class PingService extends Service {
 
 		mBuilder.setAutoCancel(true);
 
-		// The layout ID is used the notification ID
+		// The layout ID is used as the notification ID
 		notificationManager.notify(PING_NOTES, mBuilder.build());
 	}
 
