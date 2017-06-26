@@ -615,4 +615,11 @@ public class PingsDbAdapter {
 		c.close();
 		bdb.closeDatabase();
 	}
+
+	public int getNumberOfPings() {
+		Cursor countCursor = mDb.rawQuery("SELECT COUNT(*) FROM " + PINGS_TABLE, null);
+		countCursor.moveToFirst();
+		int count = countCursor.getInt(0);
+		return count;
+	}
 }
