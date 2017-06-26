@@ -147,6 +147,8 @@ public class TPController extends AppCompatActivity {
 
 	public void startCharts() {
 		Log.d("DEBUG","TEST");
+		Intent chartsIntent = new Intent(this, ChartsActivity.class);
+		startActivity(chartsIntent);
 	}
 
 	public void setAlarm() {
