@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ChartsActivity extends AppCompatActivity {
 
@@ -23,6 +24,12 @@ public class ChartsActivity extends AppCompatActivity {
         mDbHelper.openDatabase();
 
         Log.d("TEST", Integer.toString(mDbHelper.getNumberOfPings()));
+
+        List<String> tags = new ArrayList<>();
+        tags.add("test1");
+        tags.add("test2");
+        Log.d("TEST", Integer.toString(mDbHelper.getNumberOfPingsWithTags(tags)));
+
     }
 
     private void refreshTagList() {

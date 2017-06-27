@@ -1,6 +1,7 @@
 package com.fwerpers.timeprof;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,6 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class PingsDbAdapter {
@@ -620,6 +622,22 @@ public class PingsDbAdapter {
 		Cursor countCursor = mDb.rawQuery("SELECT COUNT(*) FROM " + PINGS_TABLE, null);
 		countCursor.moveToFirst();
 		int count = countCursor.getInt(0);
+		return count;
+	}
+
+	public int getNumberOfPingsWithTags(List<String> tags) {
+		List<String> tagIdStrings = new ArrayList<String>();
+		for (String tag : tags) {
+			tagIdStrings.add(String.valueOf(getTID(tag)));
+		}
+ 		String tagIdListString = TextUtils.join(",", Collections.nCopies(tags.size(), "?"));
+
+		String queryStringFormat = "SELECT %s FROM %s WHERE %s IN (%s) GROUP BY %s HAVING COUNT(*) = %s";
+		String queryString = String.format(queryStringFormat, KEY_PID, TAG_PING_TABLE, KEY_TID, tagIdListString, KEY_PID, Integer.toString(tags.size()));
+		Cursor countCursor = mDb.rawQuery(queryString, tagIdStrings.toArray(new String[tagIdStrings.size()]));
+
+		countCursor.moveToFirst();
+		int count = countCursor.getCount();
 		return count;
 	}
 }
