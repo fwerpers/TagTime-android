@@ -28,22 +28,32 @@ public class TagLineChartActivity extends AppCompatActivity {
         LineChart mChart = (LineChart) findViewById(R.id.linechart);
         List<Entry> entries = new ArrayList<Entry>();
 
-        long period = 24*60*60*1000;
-        Cursor pingCursor = mDbHelper.fetchAllPings(true);
+        long period = 60*60;
+        Cursor pingCursor = mDbHelper.fetchAllPings(false);
         int pingTimeColumnIndex = pingCursor.getColumnIndex(PingsDbAdapter.KEY_PING);
         Log.d("TEST", "Column index: " + pingTimeColumnIndex);
         Log.d("TEST", "Column count: " + pingCursor.getColumnCount());
         Log.d("TEST", "Column name: " + pingCursor.getColumnName(pingTimeColumnIndex));
         long pingTime;
+        int pingCounter = 0;
+        int dataPointCounter = 0;
 
         try {
             pingCursor.moveToFirst();
-            long firstPingTime = pingCursor.getLong(pingTimeColumnIndex);
+            pingTime = pingCursor.getLong(pingTimeColumnIndex);
+            long timeBoundary = pingTime + period;
+            Log.d("TEST", "Time boundary: " + timeBoundary);
+            Log.d("TEST", "Ping time: " + pingTime);
             while (!pingCursor.isAfterLast()) {
-                pingTime = firstPingTime - pingCursor.getLong(pingTimeColumnIndex);
-                Log.d("TEST", "pingTime: " + pingTime);
-                entries.add(new Entry(pingTime, pingTime));
-                pingCursor.moveToNext();
+                while (pingTime <= timeBoundary && !pingCursor.isAfterLast()) {
+                    pingCounter++;
+                    pingTime = pingCursor.getLong(pingTimeColumnIndex);
+                    pingCursor.moveToNext();
+                }
+                entries.add(new Entry(dataPointCounter, pingCounter));
+                dataPointCounter++;
+                pingCounter = 0;
+                timeBoundary += period;
             }
         } finally {
             pingCursor.close();
