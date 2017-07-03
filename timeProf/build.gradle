@@ -21,9 +21,9 @@ android {
 dependencies {
     compile project(':library')
     //compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-core-utils:25.4.0'
     //compile 'com.android.support:support-v4:25.+'
+    compile 'com.android.support:support-core-utils:25.4.0'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
-    compile 'com.android.support:appcompat-v7:25.+'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:+'
 }

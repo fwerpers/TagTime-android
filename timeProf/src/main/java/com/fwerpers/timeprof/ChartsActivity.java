@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,13 +24,20 @@ public class ChartsActivity extends AppCompatActivity {
         mDbHelper = PingsDbAdapter.getInstance();
         mDbHelper.openDatabase();
 
+        int totalNumberOfPings = mDbHelper.getNumberOfPings();
+
         Log.d("TEST", Integer.toString(mDbHelper.getNumberOfPings()));
 
         List<String> tags = new ArrayList<>();
-        tags.add("test1");
-        tags.add("test2");
+        tags.add("OFF");
         Log.d("TEST", Integer.toString(mDbHelper.getNumberOfPingsWithTags(tags)));
 
+        int numberOfPingsWithTags = mDbHelper.getNumberOfPingsWithTags(tags);
+
+        float percentage = (float) numberOfPingsWithTags / totalNumberOfPings;
+        String percentageText = String.format("%.3f %%", percentage);
+        TextView mPercentageText = (TextView) findViewById(R.id.percentage_text);
+        mPercentageText.setText(percentageText);
     }
 
     private void refreshTagList() {

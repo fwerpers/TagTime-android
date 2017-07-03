@@ -89,7 +89,7 @@ public class TPController extends AppCompatActivity {
 		charts.setClickable(true);
 		charts.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				startCharts();
+				startChartSelect();
 			}
 		});
 		TextView nextPing = (TextView) findViewById(R.id.NextPing);
@@ -145,10 +145,10 @@ public class TPController extends AppCompatActivity {
 //		startActivity(goals);
 //	}
 
-	public void startCharts() {
+	public void startChartSelect() {
 		Log.d("DEBUG","TEST");
-		Intent chartsIntent = new Intent(this, ChartsActivity.class);
-		startActivity(chartsIntent);
+		Intent chartSelectIntent = new Intent(this, ChartSelectActivity.class);
+		startActivity(chartSelectIntent);
 	}
 
 	public void setAlarm() {
