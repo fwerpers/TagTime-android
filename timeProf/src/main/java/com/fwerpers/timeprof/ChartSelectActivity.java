@@ -21,11 +21,25 @@ public class ChartSelectActivity extends AppCompatActivity {
             }
         });
 
+        Button mLineChartButton = (Button) findViewById(R.id.linechart_button);
+        mLineChartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startLineChartActivity();
+            }
+        });
+
     }
 
     private void startPercentageActivity() {
         Intent intent = new Intent();
         intent.setClass(this, TagPercentageActivity.class);
+        startActivity(intent);
+    }
+
+    private void startLineChartActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, TagLineChartActivity.class);
         startActivity(intent);
     }
 }

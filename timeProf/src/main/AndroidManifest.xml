@@ -67,7 +67,8 @@
         </receiver>
 
         <activity android:name=".TagPercentageActivity" />
-        <activity android:name=".ChartSelectActivity"></activity>
+        <activity android:name=".ChartSelectActivity" />
+        <activity android:name=".TagLineChartActivity"></activity>
     </application>
 
 </manifest>
