@@ -25,7 +25,7 @@ public class ChartSelectActivity extends AppCompatActivity {
 
     private void startPercentageActivity() {
         Intent intent = new Intent();
-        intent.setClass(this, ChartsActivity.class);
+        intent.setClass(this, TagPercentageActivity.class);
         startActivity(intent);
     }
 }

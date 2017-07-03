@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChartsActivity extends AppCompatActivity {
+public class TagPercentageActivity extends AppCompatActivity {
 
     private PingsDbAdapter mDbHelper;
     private ArrayList<String> mTagList = new ArrayList<>();
