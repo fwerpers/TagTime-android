@@ -26,34 +26,54 @@ public class TagLineChartActivity extends AppCompatActivity {
         mDbHelper.openDatabase();
 
         LineChart mChart = (LineChart) findViewById(R.id.linechart);
-        List<Entry> entries = new ArrayList<Entry>();
 
         long period = 60*60;
+
+        List<String> tags = new ArrayList<>();
+        tags.add("OFF");
+
+        LineData lineData = getPercentageLineData(tags, period);
+        mChart.setData(lineData);
+        mChart.invalidate();
+    }
+
+    private LineData getPercentageLineData(List<String> tags, long periodSeconds) {
+        List<Entry> entries = new ArrayList<Entry>();
         Cursor pingCursor = mDbHelper.fetchAllPings(false);
         int pingTimeColumnIndex = pingCursor.getColumnIndex(PingsDbAdapter.KEY_PING);
-        Log.d("TEST", "Column index: " + pingTimeColumnIndex);
-        Log.d("TEST", "Column count: " + pingCursor.getColumnCount());
-        Log.d("TEST", "Column name: " + pingCursor.getColumnName(pingTimeColumnIndex));
+        int pingIdColumnIndex = pingCursor.getColumnIndex(PingsDbAdapter.KEY_ROWID);
+
         long pingTime;
         int pingCounter = 0;
+        int pingWithTagsCounter = 0;
         int dataPointCounter = 0;
+        List<String> pingTags;
 
         try {
             pingCursor.moveToFirst();
             pingTime = pingCursor.getLong(pingTimeColumnIndex);
-            long timeBoundary = pingTime + period;
-            Log.d("TEST", "Time boundary: " + timeBoundary);
-            Log.d("TEST", "Ping time: " + pingTime);
+            long timeBoundary = pingTime + periodSeconds;
             while (!pingCursor.isAfterLast()) {
                 while (pingTime <= timeBoundary && !pingCursor.isAfterLast()) {
                     pingCounter++;
+                    int pingId = pingCursor.getInt(pingIdColumnIndex);
+                    try {
+                        pingTags = mDbHelper.fetchTagNamesForPing(pingId);
+                    } catch (Exception e) {
+                        return(null);
+                    }
+                    if (pingTags.containsAll(tags)) {
+                        pingWithTagsCounter++;
+                    }
                     pingTime = pingCursor.getLong(pingTimeColumnIndex);
                     pingCursor.moveToNext();
                 }
-                entries.add(new Entry(dataPointCounter, pingCounter));
+
+                entries.add(new Entry(dataPointCounter, (float)pingWithTagsCounter/pingCounter));
                 dataPointCounter++;
                 pingCounter = 0;
-                timeBoundary += period;
+                pingWithTagsCounter = 0;
+                timeBoundary += periodSeconds;
             }
         } finally {
             pingCursor.close();
@@ -61,7 +81,6 @@ public class TagLineChartActivity extends AppCompatActivity {
 
         LineDataSet dataSet = new LineDataSet(entries, "Ping times");
         LineData lineData = new LineData(dataSet);
-        mChart.setData(lineData);
-        mChart.invalidate();
+        return(lineData);
     }
 }
