@@ -217,7 +217,11 @@ public class PingService extends Service {
 		AlarmManager alarum = (AlarmManager) getSystemService(ALARM_SERVICE);
 		Intent alit = new Intent(this, TPStartUp.class);
 		alit.putExtra("ThisIntentIsTPStartUpClass", true);
-		alarum.set(AlarmManager.RTC_WAKEUP, PING * 1000, PendingIntent.getBroadcast(this, 0, alit, 0));
+		if (android.os.Build.VERSION.SDK_INT >= 23) {
+			alarum.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, PING * 1000, PendingIntent.getBroadcast(this, 0, alit, 0));
+		} else {
+			alarum.set(AlarmManager.RTC_WAKEUP, PING * 1000, PendingIntent.getBroadcast(this, 0, alit, 0));
+		}
 	}
 
 	private static final long IA = 16807;
