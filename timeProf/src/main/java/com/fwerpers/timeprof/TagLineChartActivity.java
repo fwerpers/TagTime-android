@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -27,6 +28,7 @@ public class TagLineChartActivity extends AppCompatActivity {
 
         LineChart mChart = (LineChart) findViewById(R.id.linechart);
 
+
         long period = 60*60;
 
         List<String> tags = new ArrayList<>();
@@ -34,6 +36,11 @@ public class TagLineChartActivity extends AppCompatActivity {
 
         LineData lineData = getPercentageLineData(tags, period);
         mChart.setData(lineData);
+        mChart.getData().setHighlightEnabled(false);
+        mChart.setVisibleYRangeMaximum(1.2f, YAxis.AxisDependency.LEFT);
+        mChart.setVisibleYRangeMinimum(1.2f, YAxis.AxisDependency.LEFT);
+        mChart.getAxisLeft().setSpaceBottom(0f);
+        mChart.getAxisRight().setEnabled(false);
         mChart.invalidate();
     }
 
