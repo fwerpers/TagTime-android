@@ -10,4 +10,8 @@
     <!-- Tag button colors -->
     <color name="tag_unselected_text">#888888</color>
     <color name="tag_selected_text">#eeeeee</color>
+
+    <!-- Tag button colors -->
+    <color name="tag_unselected">#E6FFEC</color>
+    <color name="tag_selected">#39B54A</color>
 </resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners
+    android:radius="2dp" />
+    <padding
+        android:bottom="@dimen/tagtoggle_padding"
+        android:left="@dimen/tagtoggle_padding"
+        android:right="@dimen/tagtoggle_padding"
+        android:top="@dimen/tagtoggle_padding"/>
+    <stroke
+        android:width="1dp"
+        android:color="@color/tag_unselected_text"/>
+    <solid
+    android:color="@color/tag_unselected" />
+</shape>

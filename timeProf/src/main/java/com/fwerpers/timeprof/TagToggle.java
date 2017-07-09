@@ -3,10 +3,9 @@ package com.fwerpers.timeprof;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-
-import com.fwerpers.timeprof.R;
 
 public class TagToggle extends Button {
 
@@ -31,8 +30,10 @@ public class TagToggle extends Button {
 		setText(tag);
 		tagId = id;
 		LayoutParams p = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+//		ViewGroup.MarginLayoutParams mp = new ViewGroup.MarginLayoutParams(p);
+//		mp.setMargins();
 		setLayoutParams(p);
-		setTextSize(24);
+		setTextSize(15);
 	}
 	
 	public TagToggle(Context context, AttributeSet attrs, int defStyle) {
@@ -55,10 +56,12 @@ public class TagToggle extends Button {
 	public void setChecked(boolean state) {
 		selected = state;
 		if (selected) {
-			setBackgroundResource(R.drawable.tagbuttononbmp);
+			setBackgroundResource(R.drawable.tagtoggle_background_selected);
+			//setBackgroundResource(R.drawable.tagbuttononbmp);
 			setTextColor(mRes.getColor(R.color.tag_selected_text));
 		} else {
-			setBackgroundResource(R.drawable.tagbuttonoffpng);
+			setBackgroundResource(R.drawable.tagtoggle_background_unselected);
+			//setBackgroundResource(R.drawable.tagbuttonoffpng);
 			setTextColor(mRes.getColor(R.color.tag_unselected_text));
 		}
 	}
