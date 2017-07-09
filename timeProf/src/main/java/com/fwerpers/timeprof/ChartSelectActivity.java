@@ -29,6 +29,14 @@ public class ChartSelectActivity extends AppCompatActivity {
             }
         });
 
+        Button mTestChartButton = (Button) findViewById(R.id.linechart_test_button);
+        mTestChartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTestLineChartActivity();
+            }
+        });
+
     }
 
     private void startPercentageActivity() {
@@ -40,6 +48,12 @@ public class ChartSelectActivity extends AppCompatActivity {
     private void startLineChartActivity() {
         Intent intent = new Intent();
         intent.setClass(this, TagLineChartActivity.class);
+        startActivity(intent);
+    }
+
+    private void startTestLineChartActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, TestLineChartActivity.class);
         startActivity(intent);
     }
 }

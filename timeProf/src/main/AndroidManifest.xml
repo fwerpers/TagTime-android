@@ -68,7 +68,8 @@
 
         <activity android:name=".TagPercentageActivity" />
         <activity android:name=".ChartSelectActivity" />
-        <activity android:name=".TagLineChartActivity"></activity>
+        <activity android:name=".TagLineChartActivity" />
+        <activity android:name=".TestLineChartActivity"></activity>
     </application>
 
 </manifest>
