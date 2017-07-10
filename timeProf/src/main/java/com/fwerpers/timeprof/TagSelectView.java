@@ -56,10 +56,17 @@ public class TagSelectView extends ScrollView {
 
     public TagSelectView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
-
         mContext = context;
-        llTags = new LinearLayout(context);
+        init(attrs, 0);
+    }
+
+    public TagSelectView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(attrs, defStyle);
+    }
+
+    private void init(AttributeSet attrs, int defStyle) {
+        llTags = new LinearLayout(mContext);
 
         llTags.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         llTags.setBackgroundColor(Color.RED);
@@ -70,57 +77,13 @@ public class TagSelectView extends ScrollView {
         mPingsDB = PingsDbAdapter.getInstance();
         mPingsDB.openDatabase();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mOrdering = prefs.getString("sortOrderPref", "FREQ");
 
         mTagsCursor = mPingsDB.fetchAllTags(mOrdering);
 
-//        if (mRowId >= 0 && mPingsDB.fetchPing(mRowId).getCount() == 0) {
-//            Toast.makeText(this, getText(R.string.editping_noping), Toast.LENGTH_SHORT).show();
-//            finish();
-//            mPingsDB.closeDatabase();
-//            return;
-//        }
         mCurrentTags = new ArrayList<>();
         refreshTags();
-    }
-
-    public TagSelectView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(attrs, defStyle);
-    }
-
-    private void init(AttributeSet attrs, int defStyle) {
-        // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.TagSelectView, defStyle, 0);
-
-        mExampleString = a.getString(
-                R.styleable.TagSelectView_exampleString);
-        mExampleColor = a.getColor(
-                R.styleable.TagSelectView_exampleColor,
-                mExampleColor);
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        mExampleDimension = a.getDimension(
-                R.styleable.TagSelectView_exampleDimension,
-                mExampleDimension);
-
-        if (a.hasValue(R.styleable.TagSelectView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.TagSelectView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }
-
-        a.recycle();
-
-        // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-
-        // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements();
     }
 
     private void invalidateTextPaintAndMeasurements() {
