@@ -61,8 +61,9 @@ public class TagSelectView extends ScrollView {
         llTags = new LinearLayout(mContext);
 
         llTags.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        llTags.setBackgroundColor(Color.RED);
+        llTags.setBackgroundColor(Color.TRANSPARENT);
         llTags.setOrientation(LinearLayout.VERTICAL);
+        //llTags.setOrientation(LinearLayout.HORIZONTAL);
         addView(llTags);
         mVto = llTags.getViewTreeObserver();
 
@@ -93,7 +94,7 @@ public class TagSelectView extends ScrollView {
 
         LinearLayout ll = new LinearLayout(mContext);
         ll.setId(FIXTAGS);
-        ll.setOrientation(1);
+        ll.setOrientation(LinearLayout.VERTICAL);
         ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         while (!mTagsCursor.isAfterLast()) {
             String tag = mTagsCursor.getString(mTagsCursor.getColumnIndex(PingsDbAdapter.KEY_TAG));
@@ -146,7 +147,7 @@ public class TagSelectView extends ScrollView {
         int pwidth = llTags.getWidth() - 15;
         int twidth = 0;
         LinearLayout tagrow = new LinearLayout(mContext);
-        tagrow.setOrientation(0);
+        tagrow.setOrientation(LinearLayout.HORIZONTAL);
         tagrow.setGravity(Gravity.CENTER_HORIZONTAL);
         tagrow.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         while (ll.getChildCount() > 0) {
@@ -156,7 +157,7 @@ public class TagSelectView extends ScrollView {
             if (tog.getWidth() > leftover) {
                 llTags.addView(tagrow);
                 tagrow = new LinearLayout(mContext);// .removeAllViews();
-                tagrow.setOrientation(0);
+                tagrow.setOrientation(LinearLayout.HORIZONTAL);
                 tagrow.setGravity(Gravity.CENTER_HORIZONTAL);
                 tagrow.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 twidth = 0;
