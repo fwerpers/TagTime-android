@@ -92,11 +92,6 @@ public class TPController extends AppCompatActivity {
 				startChartSelect();
 			}
 		});
-		TextView nextPing = (TextView) findViewById(R.id.NextPing);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
-		Long nextPingTime = mSettings.getLong(PingService.KEY_NEXT, -1);
-		Date pingDate = new Date(nextPingTime * 1000);
-		nextPing.setText(sdf.format(pingDate));
 
 //		boolean gotBeeminder = TimeProf.checkBeeminder();
 //		TextView beeminder = (TextView) findViewById(R.id.BeeminderLink);
@@ -119,6 +114,16 @@ public class TPController extends AppCompatActivity {
 //				}
 //			});
 //		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		TextView nextPing = (TextView) findViewById(R.id.NextPing);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault());
+		Long nextPingTime = mSettings.getLong(PingService.KEY_NEXT, -1);
+		Date pingDate = new Date(nextPingTime * 1000);
+		nextPing.setText(sdf.format(pingDate));
 	}
 
 	public void startExport() {
