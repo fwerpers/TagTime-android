@@ -73,7 +73,10 @@ public class PingService extends Service {
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pingservice");
 		mWakeLock.acquire();
+	}
 
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		Date launch = new Date();
 		long launchTime = launch.getTime() / 1000;
 
@@ -99,7 +102,7 @@ public class PingService extends Service {
 			// ie the system enforces only one alarm at a time per setter
 			setAlarm(NEXT);
 			this.stopSelf();
-			return;
+			return super.onStartCommand(intent, flags, startId);
 		}
 
 		// If we make it here then it's time to do something
@@ -140,10 +143,7 @@ public class PingService extends Service {
 		setAlarm(NEXT);
 		pingsDB.closeDatabase();
 		this.stopSelf();
-	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
