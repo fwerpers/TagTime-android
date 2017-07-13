@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.fwerpers.timeprof.R;
@@ -31,6 +33,17 @@ public class Preferences extends PreferenceActivity {
 //		mAction = getSupportActionBar();
 //		mAction.setHomeButtonEnabled(true);
 //		mAction.setIcon(R.drawable.tagtime_03);
+
+		EditTextPreference gapTimePreference = (EditTextPreference) findPreference("pingGap");
+		gapTimePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				int oldVal = Integer.parseInt(((EditTextPreference)preference).getText());
+				int newVal = Integer.parseInt(newValue.toString());
+				Log.d("DEBUG", Integer.toString(oldVal));
+				Log.d("DEBUG", Integer.toString(newVal));
+				return(true);
+			}
+		});
 
 		ListPreference order = (ListPreference) findPreference("sortOrderPref");
 
