@@ -77,6 +77,29 @@ public class PingService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (intent.getAction() != null && intent.getAction().equals(Constants.ACTION_GAP_CHANGED)) {
+			rescheduleAlarm();
+		} else {
+			handleAlarm();
+		}
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	private void rescheduleAlarm() {
+		AlarmManager alarum = (AlarmManager) getSystemService(ALARM_SERVICE);
+		Intent alit = new Intent(this, TPStartUp.class);
+		alit.putExtra("ThisIntentIsTPStartUpClass", true);
+		alarum.cancel(PendingIntent.getBroadcast(this, 0, alit, 0));
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = mPrefs.edit();
+		editor.putLong(KEY_NEXT, -1);
+		editor.commit();
+
+		handleAlarm();
+	}
+
+	private void handleAlarm() {
 		Date launch = new Date();
 		long launchTime = launch.getTime() / 1000;
 
@@ -102,7 +125,7 @@ public class PingService extends Service {
 			// ie the system enforces only one alarm at a time per setter
 			setAlarm(NEXT);
 			this.stopSelf();
-			return super.onStartCommand(intent, flags, startId);
+			return;
 		}
 
 		// If we make it here then it's time to do something
@@ -143,8 +166,6 @@ public class PingService extends Service {
 		setAlarm(NEXT);
 		pingsDB.closeDatabase();
 		this.stopSelf();
-
-		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
