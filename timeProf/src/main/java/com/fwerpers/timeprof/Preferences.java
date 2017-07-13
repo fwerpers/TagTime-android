@@ -41,6 +41,8 @@ public class Preferences extends PreferenceActivity {
 				int newVal = Integer.parseInt(newValue.toString());
 				Log.d("DEBUG", Integer.toString(oldVal));
 				Log.d("DEBUG", Integer.toString(newVal));
+				Intent intent = new Intent(Preferences.this, PingService.class);
+				intent.setAction(Constants.ACTION_GAP_CHANGED);
 				return(true);
 			}
 		});
