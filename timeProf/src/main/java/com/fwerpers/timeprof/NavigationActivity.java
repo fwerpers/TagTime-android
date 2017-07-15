@@ -7,12 +7,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
+    private ListView mDrawerList;
+    private List<String> mTitles;
     private CharSequence mTitle;
 
     @Override
@@ -22,9 +31,15 @@ public class NavigationActivity extends AppCompatActivity {
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (mDrawerLayout == null) {
-            Log.d("DEBUG", "FAIL");
-        }
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mTitles = new ArrayList<>();
+        mTitles.add("Overview");
+        mTitles.add("History");
+        mTitles.add("Stats");
+
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mTitles));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
@@ -44,6 +59,40 @@ public class NavigationActivity extends AppCompatActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    /** Swaps fragments in the main content view */
+    private void selectItem(int position) {
+        // Create a new fragment and specify the planet to show based on position
+//        Fragment fragment = new PlanetFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+//        fragment.setArguments(args);
+//
+//        // Insert the fragment by replacing any existing fragment
+//        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.content_frame, fragment)
+//                .commit();
+
+        // Highlight the selected item, update the title, and close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mTitles.get(position));
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
 
     /* Called whenever we call invalidateOptionsMenu() */
 //    @Override
