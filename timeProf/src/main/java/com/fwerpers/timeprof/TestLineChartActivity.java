@@ -30,7 +30,7 @@ public class TestLineChartActivity extends AppCompatActivity {
         LineChart mChart = (LineChart) findViewById(R.id.linechart);
 
 
-        long period = 60*60;
+        long period = 24*60*60;
 
         List<String> tags = new ArrayList<>();
         tags.add("OFF");
