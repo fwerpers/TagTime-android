@@ -49,4 +49,7 @@
     <string name="about_changelog">ChangeLog</string>
     <string name="about_googleplay">Visit on Google Play</string>
 
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 </resources>
