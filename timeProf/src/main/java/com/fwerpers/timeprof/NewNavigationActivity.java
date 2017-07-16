@@ -47,4 +47,20 @@ public class NewNavigationActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void switchToOverviewFragment() {
+
+    }
+
+    private void switchToLogFragment() {
+
+    }
+
+    private void switchToStatsFragment() {
+
+    }
+
+    private void switchToSettingsFragment() {
+
+    }
 }
