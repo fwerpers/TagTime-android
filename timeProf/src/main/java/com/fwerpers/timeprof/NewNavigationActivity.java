@@ -29,16 +29,16 @@ public class NewNavigationActivity extends AppCompatActivity {
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_overview:
-                                Log.d("DEBUG", "Overview");
+                                switchToOverviewFragment();
                                 break;
                             case R.id.nav_log:
-                                Log.d("DEBUG", "Log");
+                                switchToLogFragment();
                                 break;
                             case R.id.nav_stats:
-                                Log.d("DEBUG", "Stats");
+                                switchToStatsFragment();
                                 break;
                             case R.id.nav_settings:
-                                Log.d("DEBUG", "Settings");
+                                switchToSettingsFragment();
                                 break;
                         }
                         getSupportActionBar().setTitle(menuItem.getTitle());
@@ -49,18 +49,18 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToOverviewFragment() {
-
+        Log.d("DEBUG", "Overview");
     }
 
     private void switchToLogFragment() {
-
+        Log.d("DEBUG", "Log");
     }
 
     private void switchToStatsFragment() {
-
+        Log.d("DEBUG", "Stats");
     }
 
     private void switchToSettingsFragment() {
-
+        Log.d("DEBUG", "Settings");
     }
 }
