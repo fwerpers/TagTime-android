@@ -1,6 +1,8 @@
 package com.fwerpers.timeprof;
 
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ public class NewNavigationActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
+                        getSupportActionBar().setTitle(menuItem.getTitle());
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_overview:
@@ -41,11 +44,17 @@ public class NewNavigationActivity extends AppCompatActivity {
                                 switchToSettingsFragment();
                                 break;
                         }
-                        getSupportActionBar().setTitle(menuItem.getTitle());
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
+    }
+
+    private void switchToFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
     }
 
     private void switchToOverviewFragment() {
@@ -53,6 +62,8 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToLogFragment() {
+        Fragment fragment = new LogFragment();
+        switchToFragment(fragment);
         Log.d("DEBUG", "Log");
     }
 
