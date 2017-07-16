@@ -58,6 +58,8 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToOverviewFragment() {
+        Fragment fragment = new OverviewFragment();
+        switchToFragment(fragment);
         Log.d("DEBUG", "Overview");
     }
 
@@ -68,10 +70,14 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToStatsFragment() {
+        Fragment fragment = new StatsFragment();
+        switchToFragment(fragment);
         Log.d("DEBUG", "Stats");
     }
 
     private void switchToSettingsFragment() {
+        Fragment fragment = new SettingsFragment();
+        switchToFragment(fragment);
         Log.d("DEBUG", "Settings");
     }
 }
