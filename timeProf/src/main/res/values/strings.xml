@@ -52,6 +52,12 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="nav_overview_title">Overview</string>
+    <string name="nav_log_title">Log</string>
+    <string name="nav_stats_title">Stats</string>
+    <string name="nav_settings_title">Settings</string>
+    <string name="nav_toggle_title">Ping Service</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

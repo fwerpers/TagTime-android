@@ -3,23 +3,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_overview"
-            android:title="Overview" />
+            android:title="@string/nav_overview_title" />
         <item
             android:id="@+id/nav_log"
-            android:title="Log" />
+            android:title="@string/nav_log_title" />
         <item
             android:id="@+id/nav_stats"
-            android:title="Stats" />
+            android:title="@string/nav_stats_title" />
         <item
             android:id="@+id/nav_settings"
-            android:title="Settings" />
+            android:title="@string/nav_settings_title" />
     </group>
     <group
         android:id="@+id/second"
         android:checkableBehavior="single">
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/navi_item_create_notifications_sound"
-        android:title="Notifications Sounds"
+        android:title="@string/nav_toggle_title"
         app:actionLayout="@layout/nav_service_switch"
         app:showAsAction="always" />
     </group>
