@@ -1,5 +1,7 @@
 package com.fwerpers.timeprof;
 
+import android.content.Intent;
+import android.preference.PreferenceFragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,24 +29,34 @@ public class NewNavigationActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        getSupportActionBar().setTitle(menuItem.getTitle());
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_overview:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
                                 switchToOverviewFragment();
+                                mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_log:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
                                 switchToLogFragment();
+                                mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_stats:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
                                 switchToStatsFragment();
+                                mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_settings:
-                                switchToSettingsFragment();
+                                //switchToSettingsFragment();
+                                startSettingsActivity();
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_notification_switch:
                                 break;
                         }
-                        mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
@@ -76,8 +88,17 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToSettingsFragment() {
-        Fragment fragment = new SettingsFragment();
-        switchToFragment(fragment);
+        SettingsFragment fragment = new SettingsFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
         Log.d("DEBUG", "Settings");
+    }
+
+    private void startSettingsActivity() {
+        Intent pref = new Intent();
+        pref.setClass(this, Preferences.class);
+        startActivity(pref);
     }
 }
