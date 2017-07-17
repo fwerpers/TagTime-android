@@ -121,7 +121,7 @@ public class EditPing extends AppCompatActivity {
 		}
 	}
 
-	ActionBar mAction;
+	//ActionBar mAction;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -130,10 +130,10 @@ public class EditPing extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tagtime_editping);
 
-		mAction = getSupportActionBar();
-		mAction.setHomeButtonEnabled(true);
-		mAction.setDisplayHomeAsUpEnabled(true);
-		mAction.setIcon(R.drawable.tagtime_03);
+//		mAction = getSupportActionBar();
+//		mAction.setHomeButtonEnabled(true);
+//		mAction.setDisplayHomeAsUpEnabled(true);
+//		mAction.setIcon(R.drawable.tagtime_03);
 
 		// If rowId is supplied, that means we are editing a ping
 		mRowId = getIntent().getLongExtra(PingsDbAdapter.KEY_ROWID, -1);
@@ -495,7 +495,7 @@ public class EditPing extends AppCompatActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// app icon in action bar clicked; go home
-			Intent intent = new Intent(this, ViewLog.class);
+			Intent intent = new Intent(this, NewNavigationActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 			finish();
