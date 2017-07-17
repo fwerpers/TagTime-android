@@ -87,15 +87,6 @@ public class NewNavigationActivity extends AppCompatActivity {
         Log.d("DEBUG", "Stats");
     }
 
-    private void switchToSettingsFragment() {
-        SettingsFragment fragment = new SettingsFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
-        Log.d("DEBUG", "Settings");
-    }
-
     private void startSettingsActivity() {
         Intent pref = new Intent();
         pref.setClass(this, Preferences.class);
