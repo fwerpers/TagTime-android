@@ -19,9 +19,9 @@
         android:checkableBehavior="single">
         <item xmlns:app="http://schemas.android.com/apk/res-auto"
             android:checkable="false"
-            android:id="@+id/nav_notification_switch"
-            android:title="@string/nav_toggle_title"
-            app:actionLayout="@layout/nav_service_switch"
+            android:id="@+id/nav_notification_toggle"
+            android:title="Notifications"
+            app:actionLayout="@layout/nav_notification_toggle"
             app:showAsAction="always" />
         <item
             android:id="@+id/nav_settings"
