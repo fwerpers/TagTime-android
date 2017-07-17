@@ -237,6 +237,14 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(0, null, LogFragment.this);
+        refreshTagList();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         mListView = (ListView) getView().findViewById(R.id.listview);
