@@ -23,6 +23,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -43,6 +44,7 @@ public class StatsFragment extends Fragment {
 
     private LineChart mChart;
     private List<String> mTags;
+    private TagSelectView mTagSelector;
 
     public StatsFragment() {
         // Required empty public constructor
@@ -55,6 +57,7 @@ public class StatsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stats, container, false);
         mChart = (LineChart) view.findViewById(R.id.linechart);
+        mTagSelector = (TagSelectView) view.findViewById(R.id.tagselector);
 
         bucketSize = bucketSizes[bucketSizeSelection];
 
@@ -98,6 +101,9 @@ public class StatsFragment extends Fragment {
             case R.id.action_bucket_size:
                 showBucketSizeDialog();
                 break;
+            case R.id.action_tag_select:
+                showTagSelectionDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -112,8 +118,6 @@ public class StatsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose bucket size");
 
-        final int newBucketSizeSelection;
-
         builder.setSingleChoiceItems(bucketSizeStrings, bucketSizeSelection, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int selection) {
@@ -126,6 +130,32 @@ public class StatsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 if (bucketSize != bucketSizes[bucketSizeSelection]) {
                     bucketSize = bucketSizes[bucketSizeSelection];
+                    updateChartData(mTags, bucketSize);
+                    mChart.invalidate();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showTagSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Choose tags");
+
+        final TagSelectView tagSelectView = new TagSelectView(getActivity(), null);
+        builder.setView(tagSelectView);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                List<String> selectedTags = tagSelectView.getTags();
+                Collections.sort(selectedTags);
+                Collections.sort(mTags);
+                if (!selectedTags.equals(mTags)) {
+                    mTags = selectedTags;
                     updateChartData(mTags, bucketSize);
                     mChart.invalidate();
                 }
