@@ -1,12 +1,18 @@
 package com.fwerpers.timeprof;
 
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,6 +32,17 @@ import java.util.List;
 public class StatsFragment extends Fragment {
 
     private PingsDbAdapter mDbHelper;
+    private long bucketSize;
+    private int bucketSizeSelection;
+
+    private static int ONE_HOUR_POSITION = 0;
+    private static int ONE_DAY_POSITION = 1;
+    private static int ONE_WEEK_POSITION = 2;
+    private static String[] bucketSizeStrings = {"1 hour", "1 day", "1 week"};
+    private static long[] bucketSizes = {60*60, 60*60*24, 60*60*24*7};
+
+    private LineChart mChart;
+    private List<String> mTags;
 
     public StatsFragment() {
         // Required empty public constructor
@@ -37,15 +54,14 @@ public class StatsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stats, container, false);
-        LineChart mChart = (LineChart) view.findViewById(R.id.linechart);
+        mChart = (LineChart) view.findViewById(R.id.linechart);
 
-        long period = 60*60;
+        bucketSize = bucketSizes[bucketSizeSelection];
 
-        List<String> tags = new ArrayList<>();
-        tags.add("OFF");
+        mTags = new ArrayList<>();
+        mTags.add("OFF");
 
-        LineData lineData = getPercentageLineData(tags, period);
-        mChart.setData(lineData);
+        updateChartData(mTags, bucketSize);
         mChart.getData().setHighlightEnabled(false);
         mChart.getData().setDrawValues(false);
         mChart.setVisibleYRangeMaximum(1.2f, YAxis.AxisDependency.LEFT);
@@ -69,6 +85,56 @@ public class StatsFragment extends Fragment {
 
         mDbHelper = PingsDbAdapter.getInstance();
         mDbHelper.openDatabase();
+
+        // TODO: Keep in shared preferences?
+        bucketSizeSelection = ONE_WEEK_POSITION;
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_bucket_size:
+                showBucketSizeDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.chart_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void showBucketSizeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Choose bucket size");
+
+        final int newBucketSizeSelection;
+
+        builder.setSingleChoiceItems(bucketSizeStrings, bucketSizeSelection, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int selection) {
+                bucketSizeSelection = selection;
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (bucketSize != bucketSizes[bucketSizeSelection]) {
+                    bucketSize = bucketSizes[bucketSizeSelection];
+                    updateChartData(mTags, bucketSize);
+                    mChart.invalidate();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private LineData getPercentageLineData(List<String> tags, long periodSeconds) {
@@ -120,6 +186,11 @@ public class StatsFragment extends Fragment {
         dataSet.setCircleRadius(3f);
         LineData lineData = new LineData(dataSet);
         return(lineData);
+    }
+
+    private void updateChartData(List<String> tags, long bucketSize) {
+        LineData lineData = getPercentageLineData(tags, bucketSize);
+        mChart.setData(lineData);
     }
 
 }
