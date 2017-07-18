@@ -79,6 +79,10 @@ public class TagSelectView extends ScrollView {
         refreshTags();
     }
 
+    public List<String> getTags() {
+        return(mCurrentTags);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
