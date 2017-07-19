@@ -41,23 +41,24 @@ public class TagSelectView extends ScrollView {
     private static final boolean LOCAL_LOGV = true && !TimeProf.DISABLE_LOGV;
     private int FIXTAGS = R.layout.tagtime_editping;
 
-    public TagSelectView(Context context) {
+    public TagSelectView(Context context, List<String> tags) {
         super(context);
-        init(null, 0);
+        mContext = context;
+        init(null, 0, tags);
     }
 
     public TagSelectView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        init(attrs, 0);
+        init(attrs, 0, new ArrayList<String>());
     }
 
     public TagSelectView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
+        init(attrs, defStyle, new ArrayList<String>());
     }
 
-    private void init(AttributeSet attrs, int defStyle) {
+    private void init(AttributeSet attrs, int defStyle, List<String> tags) {
         llTags = new LinearLayout(mContext);
 
         llTags.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -75,12 +76,17 @@ public class TagSelectView extends ScrollView {
 
         mTagsCursor = mPingsDB.fetchAllTags(mOrdering);
 
-        mCurrentTags = new ArrayList<>();
+        mCurrentTags = new ArrayList<>(tags);
         refreshTags();
     }
 
     public List<String> getTags() {
         return(mCurrentTags);
+    }
+
+    public void setTags(List<String> tags) {
+        mCurrentTags = tags;
+        refreshTags();
     }
 
     @Override
@@ -102,6 +108,7 @@ public class TagSelectView extends ScrollView {
         ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         while (!mTagsCursor.isAfterLast()) {
             String tag = mTagsCursor.getString(mTagsCursor.getColumnIndex(PingsDbAdapter.KEY_TAG));
+            Log.d("DEBUG", tag);
             long id = mTagsCursor.getLong(mTagsCursor.getColumnIndex(PingsDbAdapter.KEY_ROWID));
             boolean on = false;
             if (mCurrentTags != null) on = mCurrentTags.contains(tag);
