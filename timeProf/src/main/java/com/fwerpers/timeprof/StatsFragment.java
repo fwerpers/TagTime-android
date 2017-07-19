@@ -44,7 +44,6 @@ public class StatsFragment extends Fragment {
 
     private LineChart mChart;
     private List<String> mTags;
-    private TagSelectView mTagSelector;
 
     public StatsFragment() {
         // Required empty public constructor
@@ -57,7 +56,6 @@ public class StatsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_stats, container, false);
         mChart = (LineChart) view.findViewById(R.id.linechart);
-        mTagSelector = (TagSelectView) view.findViewById(R.id.tagselector);
 
         bucketSize = bucketSizes[bucketSizeSelection];
 
@@ -145,7 +143,7 @@ public class StatsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose tags");
 
-        final TagSelectView tagSelectView = new TagSelectView(getActivity(), null);
+        final TagSelectView tagSelectView = new TagSelectView(getActivity(), mTags);
         builder.setView(tagSelectView);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
