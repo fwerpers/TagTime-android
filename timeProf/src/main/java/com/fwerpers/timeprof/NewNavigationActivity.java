@@ -4,11 +4,15 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +27,7 @@ public class NewNavigationActivity extends AppCompatActivity {
 
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private SharedPreferences mSettings;
     public static boolean mRunning;
 
@@ -41,6 +46,19 @@ public class NewNavigationActivity extends AppCompatActivity {
         mNotificationToggle = (ToggleButton) mNavigationView.getMenu().findItem(R.id.nav_notification_toggle).getActionView();
         mNotificationToggle.setChecked(mRunning);
         mNotificationToggle.setOnClickListener(mTogListener);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {};
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mDrawerToggle.syncState();
 
         // TODO: verify that reinstall should be the only time
         // that mRunning would be stored as "On" without having an alarm set
@@ -90,6 +108,30 @@ public class NewNavigationActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
     }
 
     private View.OnClickListener mTogListener = new View.OnClickListener() {
