@@ -5,12 +5,14 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -29,6 +32,8 @@ public class NewNavigationActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private SharedPreferences mSettings;
+    private Runnable mFragmentSwitchRunnable;
+    private Handler mHandler;
     public static boolean mRunning;
 
     private ToggleButton mNotificationToggle;
@@ -42,6 +47,7 @@ public class NewNavigationActivity extends AppCompatActivity {
         mNavigationView = (NavigationView) findViewById(R.id.navigation);
         mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         mRunning = mSettings.getBoolean(KEY_RUNNING, true);
+        mHandler = new Handler();
 
         mNotificationToggle = (ToggleButton) mNavigationView.getMenu().findItem(R.id.nav_notification_toggle).getActionView();
         mNotificationToggle.setChecked(mRunning);
@@ -52,7 +58,16 @@ public class NewNavigationActivity extends AppCompatActivity {
                 mDrawerLayout,
                 R.string.drawer_open,
                 R.string.drawer_close
-        ) {};
+        ) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (mFragmentSwitchRunnable != null) {
+                    mHandler.post(mFragmentSwitchRunnable);
+                    mFragmentSwitchRunnable= null;
+                }
+            }
+        };
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
@@ -165,9 +180,24 @@ public class NewNavigationActivity extends AppCompatActivity {
 
     private void switchToFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
+        fragmentManager.beginTransaction().
+                replace(R.id.content_frame, fragment).
+                commit();
+    }
+
+    private void switchToFragmentOnDrawerClosed(final Fragment fragment) {
+        mFragmentSwitchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // update the main content by replacing fragments
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.content_frame, fragment);
+                fragmentTransaction.commit();
+            }
+        };
     }
 
     private void switchToOverviewFragment() {
@@ -177,14 +207,18 @@ public class NewNavigationActivity extends AppCompatActivity {
     }
 
     private void switchToLogFragment() {
+        FrameLayout content = (FrameLayout)findViewById(R.id.content_frame);
+        content.removeAllViews();
         Fragment fragment = new LogFragment();
-        switchToFragment(fragment);
+        switchToFragmentOnDrawerClosed(fragment);
         Log.d("DEBUG", "Log");
     }
 
     private void switchToStatsFragment() {
+        FrameLayout content = (FrameLayout)findViewById(R.id.content_frame);
+        content.removeAllViews();
         Fragment fragment = new StatsFragment();
-        switchToFragment(fragment);
+        switchToFragmentOnDrawerClosed(fragment);
         Log.d("DEBUG", "Stats");
     }
 
