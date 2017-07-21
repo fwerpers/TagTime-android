@@ -65,8 +65,8 @@ public class StatsFragment extends Fragment {
         updateChartData(mTags, bucketSize);
         mChart.getData().setHighlightEnabled(false);
         mChart.getData().setDrawValues(false);
-        mChart.setVisibleYRangeMaximum(1.2f, YAxis.AxisDependency.LEFT);
-        mChart.setVisibleYRangeMinimum(1.2f, YAxis.AxisDependency.LEFT);
+//        mChart.setVisibleYRangeMaximum(1.2f, YAxis.AxisDependency.LEFT);
+//        mChart.setVisibleYRangeMinimum(1.2f, YAxis.AxisDependency.LEFT);
         mChart.getAxisLeft().setSpaceBottom(0f);
         mChart.getAxisRight().setEnabled(false);
         mChart.setDoubleTapToZoomEnabled(false);
