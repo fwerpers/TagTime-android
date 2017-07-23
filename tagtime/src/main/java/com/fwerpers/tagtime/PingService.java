@@ -22,6 +22,7 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -54,6 +55,7 @@ public class PingService extends Service {
 	private static long NEXT;
 
 	private static final long RETROTHRESH = 60;
+	private PowerManager.WakeLock mWakeLock;
 
 	public static PingService getInstance() {
 		return sInstance;
@@ -65,9 +67,35 @@ public class PingService extends Service {
 		if (LOCAL_LOGV) Log.v(TAG, "onCreate()");
 		sInstance = this;
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-		PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pingservice");
-		wl.acquire();
+		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pingservice");
+		mWakeLock.acquire();
+	}
 
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (intent.getAction() != null && intent.getAction().equals(Constants.ACTION_GAP_CHANGED)) {
+			rescheduleAlarm();
+		} else {
+			handleAlarm();
+		}
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	private void rescheduleAlarm() {
+		AlarmManager alarum = (AlarmManager) getSystemService(ALARM_SERVICE);
+		Intent alit = new Intent(this, TPStartUp.class);
+		alit.putExtra("ThisIntentIsTPStartUpClass", true);
+		alarum.cancel(PendingIntent.getBroadcast(this, 0, alit, 0));
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = mPrefs.edit();
+		editor.putLong(KEY_NEXT, -1);
+		editor.commit();
+
+		handleAlarm();
+	}
+
+	private void handleAlarm() {
 		Date launch = new Date();
 		long launchTime = launch.getTime() / 1000;
 
@@ -92,7 +120,6 @@ public class PingService extends Service {
 			// no big deal because this set will cancel the old one
 			// ie the system enforces only one alarm at a time per setter
 			setAlarm(NEXT);
-			wl.release();
 			this.stopSelf();
 			return;
 		}
@@ -134,8 +161,13 @@ public class PingService extends Service {
 
 		setAlarm(NEXT);
 		pingsDB.closeDatabase();
-		wl.release();
 		this.stopSelf();
+	}
+
+	@Override
+	public void onDestroy() {
+		mWakeLock.release();
+		super.onDestroy();
 	}
 
 	private long logPing(long time, String notes, List<String> tags) {

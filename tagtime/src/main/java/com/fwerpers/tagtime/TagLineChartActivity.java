@@ -28,7 +28,7 @@ public class TagLineChartActivity extends AppCompatActivity {
         LineChart mChart = (LineChart) findViewById(R.id.linechart);
 
 
-        long period = 60*60;
+        long period = 24*60*60;
 
         List<String> tags = new ArrayList<>();
         tags.add("OFF");
@@ -81,6 +81,7 @@ public class TagLineChartActivity extends AppCompatActivity {
                 pingWithTagsCounter = 0;
                 timeBoundary += periodSeconds;
             }
+            Log.d("DEBUG", Integer.toString(entries.size()));
         } finally {
             pingCursor.close();
         }
