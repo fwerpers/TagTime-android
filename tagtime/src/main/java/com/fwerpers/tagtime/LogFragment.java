@@ -128,8 +128,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
         public class ViewHolder {
             TextView pingText;
             TextView tagText;
-            TextView yellowBeeText;
-            TextView redBeeText;
         }
 
         public PingCursorAdapter(Context context, Cursor c, int flags) {
@@ -148,8 +146,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
             LogFragment.PingCursorAdapter.ViewHolder viewHolder = new LogFragment.PingCursorAdapter.ViewHolder();
             viewHolder.pingText = (TextView) view.findViewById(R.id.viewlog_row_time);
             viewHolder.tagText = (TextView) view.findViewById(R.id.viewlog_row_tags);
-            viewHolder.yellowBeeText = (TextView) view.findViewById(R.id.viewlog_row_beeminder);
-            viewHolder.redBeeText = (TextView) view.findViewById(R.id.viewlog_row_beeminder_red);
             view.setTag(viewHolder);
             return view;
         }
