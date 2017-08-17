@@ -61,19 +61,19 @@ public class StatsFragment extends Fragment {
         mTags.add("OFF");
 
         updateChartData(mTags, bucketSize);
-        mChart.getData().setHighlightEnabled(false);
-        mChart.getData().setDrawValues(false);
-//        mChart.setVisibleYRangeMaximum(1.2f, YAxis.AxisDependency.LEFT);
-//        mChart.setVisibleYRangeMinimum(1.2f, YAxis.AxisDependency.LEFT);
-        mChart.getAxisLeft().setSpaceBottom(0f);
-        mChart.getAxisRight().setEnabled(false);
-        mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setBackgroundColor(Color.WHITE);
-        mChart.getAxisLeft().setDrawGridLines(false);
-        mChart.getXAxis().setDrawGridLines(true);
-        mChart.setDescription(null);
-        mChart.getLegend().setEnabled(false);
-        mChart.invalidate();
+        if (mChart.getData() != null) {
+            mChart.getData().setHighlightEnabled(false);
+            mChart.getData().setDrawValues(false);
+            mChart.getAxisLeft().setSpaceBottom(0f);
+            mChart.getAxisRight().setEnabled(false);
+            mChart.setDoubleTapToZoomEnabled(false);
+            mChart.setBackgroundColor(Color.WHITE);
+            mChart.getAxisLeft().setDrawGridLines(false);
+            mChart.getXAxis().setDrawGridLines(true);
+            mChart.setDescription(null);
+            mChart.getLegend().setEnabled(false);
+            mChart.invalidate();
+        }
 
         return view;
     }
@@ -186,7 +186,7 @@ public class StatsFragment extends Fragment {
                     try {
                         pingTags = mDbHelper.fetchTagNamesForPing(pingId);
                     } catch (Exception e) {
-                        return(null);
+                        return (null);
                     }
                     if (pingTags.containsAll(tags)) {
                         pingWithTagsCounter++;
@@ -195,12 +195,14 @@ public class StatsFragment extends Fragment {
                     pingCursor.moveToNext();
                 }
 
-                entries.add(new Entry(dataPointCounter, (float)pingWithTagsCounter/pingCounter));
+                entries.add(new Entry(dataPointCounter, (float) pingWithTagsCounter / pingCounter));
                 dataPointCounter++;
                 pingCounter = 0;
                 pingWithTagsCounter = 0;
                 timeBoundary += periodSeconds;
             }
+        } catch (android.database.CursorIndexOutOfBoundsException e) {
+            return (null);
         } finally {
             pingCursor.close();
         }
