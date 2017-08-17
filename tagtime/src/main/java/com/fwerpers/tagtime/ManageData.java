@@ -31,7 +31,6 @@ import android.widget.Button;
 public class ManageData extends AppCompatActivity {
 	public static final String TAG = "TPManageData";
 	private PingsDbAdapter mDb;
-	private BeeminderDbAdapter mBeeDb;
 
 	//private static final int DIALOG_PROGRESS = 0;
 	private static final int DIALOG_NOMOUNT = 1;
@@ -60,8 +59,6 @@ public class ManageData extends AppCompatActivity {
 		
 		mDb = PingsDbAdapter.getInstance();
 		mDb.openDatabase();
-		mBeeDb = BeeminderDbAdapter.getInstance();
-		mBeeDb.openDatabase();
 		
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
@@ -203,7 +200,6 @@ public class ManageData extends AppCompatActivity {
 
 	private void deleteData() {
 		mDb.deleteAllData();
-		mBeeDb.deleteAllData();
 		SharedPreferences.Editor ed = mPrefs.edit();
 		ed.remove(PingService.KEY_NEXT);
 		ed.remove(PingService.KEY_SEED);
@@ -314,7 +310,6 @@ public class ManageData extends AppCompatActivity {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		mDb.closeDatabase();
-		mBeeDb.closeDatabase();
 	}
 
 	/** Handles menu item selections */
@@ -324,7 +319,7 @@ public class ManageData extends AppCompatActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// app icon in action bar clicked; go home
-			Intent intent = new Intent(this, TPController.class);
+			Intent intent = new Intent(this, NavigationActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 			finish();

@@ -55,7 +55,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     private static final boolean LOCAL_LOGV = true && !TagTime.DISABLE_LOGV;
 
     private PingsDbAdapter mDbHelper;
-    private BeeminderDbAdapter mBeeDb;
     private LogFragment.PingCursorAdapter mPingAdapter;
 
     private SimpleDateFormat mSDF;
@@ -167,30 +166,8 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
             // Figure out Beeminder submission status and update icons, also
             // setting the tag string
             try {
-                Cursor c = mBeeDb.fetchPointPings(cursor.getLong(0), BeeminderDbAdapter.KEY_PID);
                 List<Long> tags = mDbHelper.fetchTagsForPing(cursor.getLong(0));
-                Set<Long> goals = mBeeDb.findGoalsForTags(tags);
-                int numgoals = 0;
-                for (long gid : goals) {
-                    // If goal was updated later than the ping, skip this goal
-                    long updated_at = mBeeDb.getGoalUpdatedAt(gid);
-                    if (updated_at < pingtime) numgoals++;
-                }
 
-                if (c.getCount() != numgoals) {
-                    // TODO: We should check whether existing points and
-                    // goals match exactly instead of just checking the
-                    // count
-                    vh.yellowBeeText.setVisibility(View.GONE);
-                    vh.redBeeText.setVisibility(View.VISIBLE);
-                } else if (c.getCount() != 0) {
-                    vh.yellowBeeText.setVisibility(View.VISIBLE);
-                    vh.redBeeText.setVisibility(View.GONE);
-                } else {
-                    vh.yellowBeeText.setVisibility(View.GONE);
-                    vh.redBeeText.setVisibility(View.GONE);
-                }
-                c.close();
                 String tagstr = "";
                 for (long tag : tags)
                     tagstr = tagstr + " " + mTagList.get(tag);
@@ -223,8 +200,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
 
         mDbHelper = PingsDbAdapter.getInstance();
         mDbHelper.openDatabase();
-        mBeeDb = BeeminderDbAdapter.getInstance();
-        mBeeDb.openDatabase();
 
         mSDF = new SimpleDateFormat("yyyy.MM.dd'\n'HH:mm:ss", Locale.getDefault());
         mPingAdapter = new LogFragment.PingCursorAdapter(getActivity(), null, true);
@@ -274,7 +249,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onDestroy() {
         getActivity().unregisterReceiver(pingUpdateReceiver);
-        mBeeDb.closeDatabase();
         mDbHelper.closeDatabase();
         super.onDestroy();
     }
@@ -369,6 +343,6 @@ public class LogFragment extends Fragment implements LoaderManager.LoaderCallbac
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-        return new ViewLog.PingsCursorLoader(getActivity(), mDbHelper);
+        return new PingsCursorLoader(getActivity(), mDbHelper);
     }
 }

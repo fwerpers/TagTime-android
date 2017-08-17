@@ -42,7 +42,6 @@ public class TagTime extends Application {
 			version = "???";
 		}
 
-		BeeminderDbAdapter.initializeInstance(this);
 		PingsDbAdapter.initializeInstance(this);
 
 		Log.v(TAG, "Starting TagTime. Package=" + pkgname + ", Version=" + version);

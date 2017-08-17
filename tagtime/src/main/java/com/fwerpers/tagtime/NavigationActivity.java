@@ -1,106 +1,230 @@
 package com.fwerpers.tagtime;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.os.Handler;
+import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.FrameLayout;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class NavigationActivity extends AppCompatActivity {
 
+    public static final String KEY_RUNNING = "running";
+
+    private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private ListView mDrawerList;
-    private List<String> mTitles;
-    private CharSequence mTitle;
+    private SharedPreferences mSettings;
+    private Runnable mFragmentSwitchRunnable;
+    private Handler mHandler;
+    public static boolean mRunning;
+
+    private ToggleButton mNotificationToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
+        setContentView(R.layout.activity_new_navigation);
 
-        mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation);
+        mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        mRunning = mSettings.getBoolean(KEY_RUNNING, true);
+        mHandler = new Handler();
 
-        mTitles = new ArrayList<>();
-        mTitles.add("Overview");
-        mTitles.add("History");
-        mTitles.add("Stats");
-        mTitles.add("Settings");
+        mNotificationToggle = (ToggleButton) mNavigationView.getMenu().findItem(R.id.nav_notification_toggle).getActionView();
+        mNotificationToggle.setChecked(mRunning);
+        mNotificationToggle.setOnClickListener(mTogListener);
 
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mTitles));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (mFragmentSwitchRunnable != null) {
+                    mHandler.post(mFragmentSwitchRunnable);
+                    mFragmentSwitchRunnable= null;
+                }
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-    }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mDrawerToggle.syncState();
+
+        // TODO: verify that reinstall should be the only time
+        // that mRunning would be stored as "On" without having an alarm set
+        // for the next ping time...
+        // if (mRunning) {
+        Integer stored = Integer.parseInt(mSettings.getString("KEY_APP_VERSION", "-1"));
+        Integer manifest = Integer.parseInt(getText(R.string.app_version).toString());
+        if (stored < manifest || mSettings.getLong(PingService.KEY_NEXT, -1) < 0
+                || mSettings.getLong(PingService.KEY_SEED, -1) < 0) {
+            startService(new Intent(this, PingService.class));
         }
-    }
+        // }
 
-    /** Swaps fragments in the main content view */
-    private void selectItem(int position) {
-        // Create a new fragment and specify the planet to show based on position
-        Fragment fragment = new LogFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(LogFragment.ARG_PLANET_NUMBER, position);
-//        fragment.setArguments(args);
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
-
-        // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mTitles.get(position));
-        mDrawerLayout.closeDrawer(mDrawerList);
+        //setting up selected item listener
+        mNavigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_overview:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
+                                switchToOverviewFragment();
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_log:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
+                                switchToLogFragment();
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_stats:
+                                menuItem.setChecked(true);
+                                getSupportActionBar().setTitle(menuItem.getTitle());
+                                switchToStatsFragment();
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_settings:
+                                //switchToSettingsFragment();
+                                startSettingsActivity();
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_notification_toggle:
+                                break;
+                        }
+                        return true;
+                    }
+                });
     }
 
     @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        mDrawerToggle.syncState();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
-    /* Called whenever we call invalidateOptionsMenu() */
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        // If the nav drawer is open, hide action items related to the content view
-//        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-//        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-//        return super.onPrepareOptionsMenu(menu);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private View.OnClickListener mTogListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            SharedPreferences.Editor editor = mSettings.edit();
+
+            // Perform action on clicks
+            if (mNotificationToggle.isChecked()) {
+                Toast.makeText(NavigationActivity.this, "Pings ON", Toast.LENGTH_SHORT).show();
+                mRunning = true;
+                editor.putBoolean(KEY_RUNNING, mRunning);
+                setAlarm();
+            } else {
+                Toast.makeText(NavigationActivity.this, "Pings OFF", Toast.LENGTH_SHORT).show();
+                mRunning = false;
+                editor.putBoolean(KEY_RUNNING, mRunning);
+                cancelAlarm();
+            }
+            editor.commit();
+        }
+    };
+
+    public void setAlarm() {
+        startService(new Intent(this, PingService.class));
+    }
+
+    public void cancelAlarm() {
+        AlarmManager alarum = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarum.cancel(PendingIntent.getService(this, 0, new Intent(this, PingService.class), 0));
+    }
+
+    private void switchToFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().
+                replace(R.id.content_frame, fragment).
+                commit();
+    }
+
+    private void switchToFragmentOnDrawerClosed(final Fragment fragment) {
+        mFragmentSwitchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // update the main content by replacing fragments
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.content_frame, fragment);
+                fragmentTransaction.commit();
+            }
+        };
+    }
+
+    private void switchToOverviewFragment() {
+        Fragment fragment = new OverviewFragment();
+        switchToFragment(fragment);
+        Log.d("DEBUG", "Overview");
+    }
+
+    private void switchToLogFragment() {
+        FrameLayout content = (FrameLayout)findViewById(R.id.content_frame);
+        content.removeAllViews();
+        Fragment fragment = new LogFragment();
+        switchToFragmentOnDrawerClosed(fragment);
+        Log.d("DEBUG", "Log");
+    }
+
+    private void switchToStatsFragment() {
+        FrameLayout content = (FrameLayout)findViewById(R.id.content_frame);
+        content.removeAllViews();
+        Fragment fragment = new StatsFragment();
+        switchToFragmentOnDrawerClosed(fragment);
+        Log.d("DEBUG", "Stats");
+    }
+
+    private void startSettingsActivity() {
+        Intent pref = new Intent();
+        pref.setClass(this, Preferences.class);
+        startActivity(pref);
+    }
 }

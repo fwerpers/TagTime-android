@@ -24,28 +24,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.fwerpers.tagtime.TPController"
-            android:label="@string/app_title"
-            android:screenOrientation="portrait">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity
             android:name="com.fwerpers.tagtime.EditPing"
             android:label="@string/editping_title" />
-        <activity
-            android:name="com.fwerpers.tagtime.ViewLog"
-            android:label="@string/viewlog_title" />
-        <activity
-            android:name="com.fwerpers.tagtime.EditGoal"
-            android:label="@string/editgoal_title"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.fwerpers.tagtime.ViewGoals"
-            android:label="@string/viewgoals_title" />
         <activity
             android:name="com.fwerpers.tagtime.ManageData"
             android:label="@string/managedata_title" />
@@ -54,7 +34,6 @@
             android:label="@string/prefs_title" />
 
         <service android:name="com.fwerpers.tagtime.PingService" />
-        <service android:name="com.fwerpers.tagtime.BeeminderService" />
 
         <receiver
             android:name="com.fwerpers.tagtime.TPStartUp"
@@ -66,17 +45,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.fwerpers.tagtime.TagPercentageActivity" />
-        <activity android:name="com.fwerpers.tagtime.ChartSelectActivity" />
-        <activity android:name="com.fwerpers.tagtime.TagLineChartActivity" />
-        <activity android:name="com.fwerpers.tagtime.TestLineChartActivity" />
         <activity android:name="com.fwerpers.tagtime.NavigationActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name="com.fwerpers.tagtime.NewNavigationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

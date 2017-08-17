@@ -585,8 +585,6 @@ public class PingsDbAdapter {
 
 	/** Cleans up the tags database, removing all unused tags */
 	public void cleanupUnusedTags() {
-		BeeminderDbAdapter bdb = BeeminderDbAdapter.getInstance();
-		bdb.openDatabase();
 
 		Cursor c = fetchAllTags();
 		c.moveToFirst();
@@ -600,11 +598,6 @@ public class PingsDbAdapter {
 			int usecount = tids.getCount();
 			tids.close();
 
-			// Check goal tag pairs
-			Cursor gtids = bdb.fetchGoalTags(tagid, BeeminderDbAdapter.KEY_TID);
-			usecount += gtids.getCount();
-			gtids.close();
-
 			if (LOCAL_LOGV) Log.v(TAG, "cleanupUnusedTags: tag " + c.getString(tagIdx) + " is used " + usecount
 					+ " times");
 			if (usecount == 0) {
@@ -615,7 +608,6 @@ public class PingsDbAdapter {
 			c.moveToNext();
 		}
 		c.close();
-		bdb.closeDatabase();
 	}
 
 	public int getNumberOfPings() {

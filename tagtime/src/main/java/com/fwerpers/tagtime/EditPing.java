@@ -423,16 +423,6 @@ public class EditPing extends AppCompatActivity {
 			Intent resultIntent = new Intent();
 			resultIntent.putExtra(KEY_TAGS, mCurrentTagString);
 			setResult(RESULT_OK, resultIntent);
-
-			// Submit datapoint associated with the ping
-			if (mRowId >= 0) {
-				Intent intent = new Intent(this, BeeminderService.class);
-				intent.setAction(BeeminderService.ACTION_EDITPING);
-				intent.putExtra(BeeminderService.KEY_PID, mRowId);
-				intent.putExtra(BeeminderService.KEY_OLDTAGS, "");
-				intent.putExtra(BeeminderService.KEY_NEWTAGS, mCurrentTagString);
-				this.startService(intent);
-			}
 		}
 		TagTime.broadcastPingUpdate( false );
 		super.finish();
@@ -492,7 +482,7 @@ public class EditPing extends AppCompatActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// app icon in action bar clicked; go home
-			Intent intent = new Intent(this, NewNavigationActivity.class);
+			Intent intent = new Intent(this, NavigationActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 			finish();

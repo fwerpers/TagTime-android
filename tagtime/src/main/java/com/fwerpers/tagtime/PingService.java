@@ -100,7 +100,7 @@ public class PingService extends Service {
 		long launchTime = launch.getTime() / 1000;
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		mNotify = mPrefs.getBoolean(TPController.KEY_RUNNING, true);
+		mNotify = mPrefs.getBoolean(Constants.KEY_RUNNING, true);
 
 		NEXT = mPrefs.getLong(KEY_NEXT, -1);
 		SEED = mPrefs.getLong(KEY_SEED, -1);
@@ -284,7 +284,7 @@ public class PingService extends Service {
 	// and so should only be called once per next ping to calculate,
 	// after calling prevping.
 	public static long nextping(long prev, int gap) {
-		if (TPController.DEBUG) return now() + 60;
+		if (Constants.DEBUG) return now() + 60;
 		return Math.max(prev + 1, Math.round(prev + exprand(gap)));
 	}
 
@@ -295,7 +295,7 @@ public class PingService extends Service {
 		// until the next ping is >= t.
 		final int TUES = 1261198800; // some random time more recent than that..
 		final int BOT = 1184083200; // start at the birth of timepie!
-		long nxt = TPController.DEBUG ? TUES : BOT;
+		long nxt = Constants.DEBUG ? TUES : BOT;
 		long lst = nxt;
 		long lstseed = SEED;
 		while (nxt < t) {
