@@ -8,6 +8,7 @@ android {
         applicationId "com.fwerpers.tagtime"
         minSdkVersion 11
         targetSdkVersion 25
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -29,4 +30,11 @@ dependencies {
     compile 'com.android.support:support-v4:25.4.0'
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support:preference-v7:25.4.0'
+
+    // Testing
+    androidTestCompile 'com.android.support:support-annotations:25.4.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    // Optional -- Hamcrest library
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
 }
