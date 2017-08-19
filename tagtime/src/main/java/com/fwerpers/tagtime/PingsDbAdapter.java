@@ -85,7 +85,7 @@ public class PingsDbAdapter {
 
 	/* ****** Database and table names ****** */
 	
-	private static final String DATABASE_NAME = "timepiedata";
+	public static final String DATABASE_NAME = "timepiedata";
 	private static final String PINGS_TABLE = "pings";
 	private static final String TAGS_TABLE = "tags";
 	private static final String TAG_PING_TABLE = "tag_ping";
