@@ -73,6 +73,7 @@ public class PingService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.d("DEBUG", "Ping service started");
 		if (intent.getAction() != null && intent.getAction().equals(Constants.ACTION_GAP_CHANGED)) {
 			rescheduleAlarm();
 		} else {
@@ -137,6 +138,7 @@ public class PingService extends Service {
 		// no
 		// apparent reason, then assume the computer was off and auto-log them.
 		while (NEXT < launchTime - RETROTHRESH) {
+			Log.d("DEBUG", "Logging ping with time: " + NEXT);
 			logPing(NEXT, "", Arrays.asList(new String[] { "OFF" }));
 			NEXT = nextping(NEXT, mGap);
 		}
@@ -166,6 +168,7 @@ public class PingService extends Service {
 
 	@Override
 	public void onDestroy() {
+		Log.d("DEBUG", "Ping service done");
 		mWakeLock.release();
 		super.onDestroy();
 	}
