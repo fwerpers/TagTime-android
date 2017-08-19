@@ -28,6 +28,7 @@ public class PingServiceTest {
     public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(5L, TimeUnit.SECONDS);
 
     // Tests the case when the user hasn't started the app in a while
+    // which means there are a lot of pings to store in the database
     @Test
     public void testPingService() throws TimeoutException {
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getTargetContext());
