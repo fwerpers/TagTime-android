@@ -1,5 +1,6 @@
 package com.fwerpers.tagtime;
 
+import android.database.Cursor;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
@@ -9,13 +10,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
+import static com.fwerpers.tagtime.PingsDbAdapter.KEY_TAG;
 import static org.junit.Assert.*;
 
 /**
  * Created by FWerpers on 18/08/17.
  */
 @RunWith(AndroidJUnit4.class)
-public class DatabaseTest {
+public class InstrumentedDatabaseTest {
     private PingsDbAdapter mPingsAdapter;
 
     @Before
@@ -32,11 +34,13 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testDb() throws Exception {
-        String newTag = "test";
+    public void testTagInsert() throws Exception {
+        String newTag = "testTag";
         mPingsAdapter.newTag(newTag);
-        long tid = mPingsAdapter.getTID(newTag);
-        Log.d("TEST", "tet");
-        assertFalse(tid == -1);
+        Cursor tagCursor = mPingsAdapter.fetchAllTags();
+        tagCursor.moveToFirst();
+        int idx = tagCursor.getColumnIndex(KEY_TAG);
+        String tag = tagCursor.getString(idx);
+        assertEquals(tag, newTag);
     }
 }
