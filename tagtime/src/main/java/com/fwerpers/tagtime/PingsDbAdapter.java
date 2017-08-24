@@ -187,7 +187,7 @@ public class PingsDbAdapter {
 	 */
 	public long createPing(long pingtime, String notes, List<String> tags, int period) {
 		if (LOCAL_LOGV) Log.v(TAG, "createPing()");
-		long pid = newPing(pingtime, notes, period);
+		long pid = insertPing(pingtime, notes, period);
 		if (!updateTaggings(pid, tags)) {
 			Log.e(TAG, "createPing: error creating the tag-ping entries");
 		}
@@ -196,7 +196,7 @@ public class PingsDbAdapter {
 	}
 
 	/** Internal function to insert a new ping into the pings table */
-	private long newPing(long pingtime, String pingnotes, int period) {
+	private long insertPing(long pingtime, String pingnotes, int period) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_PING, pingtime);
 		initialValues.put(KEY_NOTES, pingnotes);
