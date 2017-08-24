@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static com.fwerpers.tagtime.PingsDbAdapter.KEY_TAG;
 import static org.junit.Assert.*;
@@ -38,9 +41,21 @@ public class InstrumentedDatabaseTest {
         String newTag = "testTag";
         mPingsAdapter.newTag(newTag);
         Cursor tagCursor = mPingsAdapter.fetchAllTags();
+        assertTrue(tagCursor.getCount() == 1);
         tagCursor.moveToFirst();
         int idx = tagCursor.getColumnIndex(KEY_TAG);
         String tag = tagCursor.getString(idx);
         assertEquals(tag, newTag);
+    }
+
+    @Test
+    public void testPingInsert() throws Exception {
+        long newTime = 123;
+        String newNotes = "hejhopp";
+        List<String> newTags = Arrays.asList(new String[] { "OFF" });
+        int newPeriod = 45;
+        long pid = mPingsAdapter.createPing(newTime, newNotes, newTags, newPeriod);
+        List<String> tags = mPingsAdapter.fetchTagNamesForPing(pid);
+        assertEquals(tags, newTags);
     }
 }
