@@ -24,6 +24,8 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import static com.fwerpers.tagtime.PingService.KEY_NEXT;
+
 public class NavigationActivity extends AppCompatActivity {
 
     public static final String KEY_RUNNING = "running";
@@ -74,6 +76,15 @@ public class NavigationActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDrawerToggle.syncState();
+
+        // Simulate the case for which the app freezes on start
+        if (Constants.DEBUG_DATABASE_FREEZE) {
+            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = mPrefs.edit();
+            long NEXT = PingService.now() - 60*60*24;
+            editor.putLong(KEY_NEXT, NEXT);
+            editor.commit();
+        }
 
         // TODO: verify that reinstall should be the only time
         // that mRunning would be stored as "On" without having an alarm set
