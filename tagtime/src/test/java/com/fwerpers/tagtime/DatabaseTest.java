@@ -36,10 +36,11 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testTagInsert2() throws Exception {
+    public void testTagInsert() throws Exception {
         String newTag = "testTag";
         mPingsAdapter.newTag(newTag);
         Cursor tagCursor = mPingsAdapter.fetchAllTags();
+        assertTrue(tagCursor.getCount() == 1);
         tagCursor.moveToFirst();
         int idx = tagCursor.getColumnIndex(KEY_TAG);
         String tag = tagCursor.getString(idx);
