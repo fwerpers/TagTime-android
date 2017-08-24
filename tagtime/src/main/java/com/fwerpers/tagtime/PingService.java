@@ -181,7 +181,7 @@ public class PingService extends Service {
 	// ////////////////////////////////////////////////////////////////////
 	// just cuz original timepie uses unixtime, which is in seconds,
 	// not universal time, which is in milliseconds
-	private static long now() {
+	public static long now() {
 		long time = System.currentTimeMillis() / 1000;
 		return time;
 	}
