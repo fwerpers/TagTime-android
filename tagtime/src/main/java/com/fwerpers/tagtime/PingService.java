@@ -106,6 +106,8 @@ public class PingService extends Service {
 		NEXT = mPrefs.getLong(KEY_NEXT, -1);
 		SEED = mPrefs.getLong(KEY_SEED, -1);
 
+		Log.d("TESTING", ""+SEED);
+
 		try {
 			mGap = Integer.parseInt(mPrefs.getString("pingGap", "5"));
 		} catch (NumberFormatException e) {
@@ -138,7 +140,7 @@ public class PingService extends Service {
 		// no
 		// apparent reason, then assume the computer was off and auto-log them.
 		while (NEXT < launchTime - RETROTHRESH) {
-			Log.d("DEBUG", "Logging ping with time: " + NEXT);
+			Log.d("TESTING", "Logging ping with time: " + NEXT);
 			logPing(NEXT, "", Arrays.asList(new String[] { "OFF" }));
 			NEXT = nextping(NEXT, mGap);
 		}
