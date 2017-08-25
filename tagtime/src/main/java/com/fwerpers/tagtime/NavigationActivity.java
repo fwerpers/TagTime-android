@@ -174,7 +174,6 @@ public class NavigationActivity extends AppCompatActivity {
                 Toast.makeText(NavigationActivity.this, "Pings OFF", Toast.LENGTH_SHORT).show();
                 mRunning = false;
                 editor.putBoolean(KEY_RUNNING, mRunning);
-                cancelAlarm();
             }
             editor.commit();
         }
@@ -182,11 +181,6 @@ public class NavigationActivity extends AppCompatActivity {
 
     public void setAlarm() {
         startService(new Intent(this, PingService.class));
-    }
-
-    public void cancelAlarm() {
-        AlarmManager alarum = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarum.cancel(PendingIntent.getService(this, 0, new Intent(this, PingService.class), 0));
     }
 
     private void switchToFragment(Fragment fragment) {
