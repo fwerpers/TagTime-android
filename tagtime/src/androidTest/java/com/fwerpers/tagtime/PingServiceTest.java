@@ -20,6 +20,7 @@ import java.util.prefs.*;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static com.fwerpers.tagtime.PingService.KEY_NEXT;
+import static com.fwerpers.tagtime.R.id.next;
 import static org.junit.Assert.*;
 
 /**
@@ -59,7 +60,7 @@ public class PingServiceTest {
     // Tests the case when the user hasn't started the app in a while
     // which means there are a lot of pings to store in the database
     //@Test
-    public void testNextIsInPast() throws TimeoutException {
+    public void testNextIsInDistantPast() throws TimeoutException {
         long nextPingTime = PingService.now() - 60*60*24;
         long seed = 666;
         SharedPrefUtil.setNextPingTime(nextPingTime);
@@ -80,11 +81,17 @@ public class PingServiceTest {
     }
 
     @Test
-    public void testNextIsNotSet() throws TimeoutException {
+    public void testNextAndSeedIsNotSet() throws TimeoutException {
         Intent serviceIntent = new Intent(getTargetContext(), PingService.class);
+        long nextBefore = SharedPrefUtil.getNextPingTime();
+        long seedBefore = SharedPrefUtil.getSeed();
+        assertEquals(-1, nextBefore);
+        assertEquals(-1, seedBefore);
+
         mServiceRule.startService(serviceIntent);
         long next = SharedPrefUtil.getNextPingTime();
-        assertTrue(next != -1);
+        long seed = SharedPrefUtil.getSeed();
+        assertNotEquals(next, -1);
     }
 
 
