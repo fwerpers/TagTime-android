@@ -106,8 +106,6 @@ public class PingService extends Service {
 		NEXT = mPrefs.getLong(KEY_NEXT, -1);
 		SEED = mPrefs.getLong(KEY_SEED, -1);
 
-		Log.d("TESTING", ""+SEED);
-
 		try {
 			mGap = Integer.parseInt(mPrefs.getString("pingGap", "5"));
 		} catch (NumberFormatException e) {
