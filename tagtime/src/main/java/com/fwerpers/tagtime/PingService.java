@@ -52,6 +52,7 @@ public class PingService extends Service {
 	// seed is a variable that is really the state of the RNG.
 	private long mSeed;
 	private long mNext;
+	private RandomTimeGenerator timeGenerator;
 
 	private static final long RETROTHRESH = 60;
 	private PowerManager.WakeLock mWakeLock;
@@ -105,6 +106,8 @@ public class PingService extends Service {
 		mNext = mPrefs.getLong(KEY_NEXT, -1);
 		mSeed = mPrefs.getLong(KEY_SEED, -1);
 
+		timeGenerator = new RandomTimeGenerator(mSeed);
+
 		Log.d("DEBUG", "mNext at start: "+mNext);
 
 		try {
@@ -127,7 +130,7 @@ public class PingService extends Service {
 		// If we make it here then it's time to do something
 		// ---------------------
 		if (mNext == -1 || mSeed == -1) { // then need to recalc from beg.
-			mNext = nextping(prevping(launchTime, mGap), mGap);
+			mNext = timeGenerator.recalculateNextTime(launchTime, mGap);
 		}
 
 		pingsDB = PingsDbAdapter.getInstance();
@@ -139,7 +142,7 @@ public class PingService extends Service {
 		while (mNext < launchTime - RETROTHRESH) {
 			Log.d("TESTING", "Logging ping with time: " + mNext);
 			logPing(mNext, "", Arrays.asList(new String[] { "OFF" }));
-			mNext = nextping(mNext, mGap);
+			mNext = timeGenerator.nextping(mNext, mGap);
 		}
 		// Next, ping for any pings in the last retrothresh seconds.
 		do {
@@ -151,16 +154,14 @@ public class PingService extends Service {
 					long rowID = logPing(mNext, "", Arrays.asList(new String[] { tag }));
 					sendNote(mNext, rowID);
 				}
-				mNext = nextping(mNext, mGap);
+				mNext = timeGenerator.nextping(mNext, mGap);
 			}
 		} while (mNext <= now());
 
 		Log.d("DEBUG", ""+mNext);
 
-		SharedPreferences.Editor editor = mPrefs.edit();
-		editor.putLong(KEY_NEXT, mNext);
-		editor.putLong(KEY_SEED, mSeed);
-		editor.commit();
+		SharedPrefUtil.setNextPingTime(mNext);
+		SharedPrefUtil.setSeed(timeGenerator.getSeed());
 
 		setAlarm(mNext);
 		pingsDB.closeDatabase();
@@ -254,61 +255,6 @@ public class PingService extends Service {
 		} else {
 			alarum.set(AlarmManager.RTC_WAKEUP, PING * 1000, PendingIntent.getBroadcast(this, 0, alit, 0));
 		}
-	}
-
-	private static final long IA = 16807;
-	private static final long IM = 2147483647;
-	private static final long INITSEED = 666;
-
-	/* *********************** *
-	 * Random number generator * ***********************
-	 */
-
-	// Returns a random integer in [1,$IM-1]; changes $seed, ie, RNG state.
-	// (This is ran0 from Numerical Recipes and has a period of ~2 billion.)
-	private long ran0() {
-		mSeed = IA * mSeed % IM;
-		return mSeed;
-	}
-
-	// Returns a U(0,1) random number.
-	private double ran01() {
-		return ran0() / (IM * 1.0);
-	}
-
-	// Returns a random number drawn from an exponential
-	// distribution with mean gap. Gap is in minutes, we
-	// want seconds, so multiply by 60.
-	public double exprand(int gap) {
-		return -1 * gap * 60 * Math.log(ran01());
-	}
-
-	// Takes previous ping time, returns random next ping time (unix time).
-	// NB: this has the side effect of changing the RNG state ($seed)
-	// and so should only be called once per next ping to calculate,
-	// after calling prevping.
-	public long nextping(long prev, int gap) {
-		if (Constants.DEBUG) return now() + 60;
-		return Math.max(prev + 1, Math.round(prev + exprand(gap)));
-	}
-
-	// Computes the last scheduled ping time before time t.
-	public long prevping(long t, int gap) {
-		mSeed = INITSEED;
-		// Starting at the beginning of time, walk forward computing next pings
-		// until the next ping is >= t.
-		final int TUES = 1261198800; // some random time more recent than that..
-		final int BOT = 1184083200; // start at the birth of timepie!
-		long nxt = Constants.DEBUG ? TUES : BOT;
-		long lst = nxt;
-		long lstseed = mSeed;
-		while (nxt < t) {
-			lst = nxt;
-			lstseed = mSeed;
-			nxt = nextping(nxt, gap);
-		}
-		mSeed = lstseed;
-		return lst;
 	}
 
 	@Override
