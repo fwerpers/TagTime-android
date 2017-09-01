@@ -51,7 +51,7 @@ public class RandomTimeGenerator {
     // and so should only be called once per next ping to calculate,
     // after calling prevping.
     public long nextping(long prev, int gap) {
-        if (Constants.DEBUG) return now() + 60;
+        if (Constants.DEBUG) return now() + 30;
         return Math.max(prev + 1, Math.round(prev + exprand(gap)));
     }
 
