@@ -22,7 +22,6 @@ import android.os.PowerManager;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -51,8 +50,8 @@ public class PingService extends Service {
 	private int mGap;
 
 	// seed is a variable that is really the state of the RNG.
-	private static long SEED;
-	private static long NEXT;
+	private static long mSeed;
+	private static long mNext;
 
 	private static final long RETROTHRESH = 60;
 	private PowerManager.WakeLock mWakeLock;
@@ -103,8 +102,10 @@ public class PingService extends Service {
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mNotify = mPrefs.getBoolean(Constants.KEY_RUNNING, true);
 
-		NEXT = mPrefs.getLong(KEY_NEXT, -1);
-		SEED = mPrefs.getLong(KEY_SEED, -1);
+		mNext = mPrefs.getLong(KEY_NEXT, -1);
+		mSeed = mPrefs.getLong(KEY_SEED, -1);
+
+		Log.d("DEBUG", "mNext at start: "+mNext);
 
 		try {
 			mGap = Integer.parseInt(mPrefs.getString("pingGap", "5"));
@@ -113,22 +114,20 @@ public class PingService extends Service {
 			mGap = 5;
 		}
 
-		//mGap = 5;
-
 		// First do a quick check to see if next ping is still in the future...
-		if (NEXT > launchTime) {
+		if (mNext > launchTime) {
 			// note: if we already set an alarm for this ping, it's
 			// no big deal because this set will cancel the old one
 			// ie the system enforces only one alarm at a time per setter
-			setAlarm(NEXT);
+			setAlarm(mNext);
 			this.stopSelf();
 			return;
 		}
 
 		// If we make it here then it's time to do something
 		// ---------------------
-		if (NEXT == -1 || SEED == -1) { // then need to recalc from beg.
-			NEXT = nextping(prevping(launchTime, mGap), mGap);
+		if (mNext == -1 || mSeed == -1) { // then need to recalc from beg.
+			mNext = nextping(prevping(launchTime, mGap), mGap);
 		}
 
 		pingsDB = PingsDbAdapter.getInstance();
@@ -137,31 +136,33 @@ public class PingService extends Service {
 		// First, if we missed any pings by more than $retrothresh seconds for
 		// no
 		// apparent reason, then assume the computer was off and auto-log them.
-		while (NEXT < launchTime - RETROTHRESH) {
-			Log.d("TESTING", "Logging ping with time: " + NEXT);
-			logPing(NEXT, "", Arrays.asList(new String[] { "OFF" }));
-			NEXT = nextping(NEXT, mGap);
+		while (mNext < launchTime - RETROTHRESH) {
+			Log.d("TESTING", "Logging ping with time: " + mNext);
+			logPing(mNext, "", Arrays.asList(new String[] { "OFF" }));
+			mNext = nextping(mNext, mGap);
 		}
 		// Next, ping for any pings in the last retrothresh seconds.
 		do {
-			while (NEXT <= now()) {
-				if (NEXT < now() - RETROTHRESH) {
-					logPing(NEXT, "", Arrays.asList(new String[] { "OFF" }));
+			while (mNext <= now()) {
+				if (mNext < now() - RETROTHRESH) {
+					logPing(mNext, "", Arrays.asList(new String[] { "OFF" }));
 				} else {
 					String tag = (mNotify) ? "" : "OFF";
-					long rowID = logPing(NEXT, "", Arrays.asList(new String[] { tag }));
-					sendNote(NEXT, rowID);
+					long rowID = logPing(mNext, "", Arrays.asList(new String[] { tag }));
+					sendNote(mNext, rowID);
 				}
-				NEXT = nextping(NEXT, mGap);
+				mNext = nextping(mNext, mGap);
 			}
-		} while (NEXT <= now());
+		} while (mNext <= now());
+
+		Log.d("DEBUG", ""+mNext);
 
 		SharedPreferences.Editor editor = mPrefs.edit();
-		editor.putLong(KEY_NEXT, NEXT);
-		editor.putLong(KEY_SEED, SEED);
+		editor.putLong(KEY_NEXT, mNext);
+		editor.putLong(KEY_SEED, mSeed);
 		editor.commit();
 
-		setAlarm(NEXT);
+		setAlarm(mNext);
 		pingsDB.closeDatabase();
 		this.stopSelf();
 	}
@@ -265,20 +266,20 @@ public class PingService extends Service {
 
 	// Returns a random integer in [1,$IM-1]; changes $seed, ie, RNG state.
 	// (This is ran0 from Numerical Recipes and has a period of ~2 billion.)
-	private static long ran0() {
-		SEED = IA * SEED % IM;
-		return SEED;
+	private long ran0() {
+		mSeed = IA * mSeed % IM;
+		return mSeed;
 	}
 
 	// Returns a U(0,1) random number.
-	private static double ran01() {
+	private double ran01() {
 		return ran0() / (IM * 1.0);
 	}
 
 	// Returns a random number drawn from an exponential
 	// distribution with mean gap. Gap is in minutes, we
 	// want seconds, so multiply by 60.
-	public static double exprand(int gap) {
+	public double exprand(int gap) {
 		return -1 * gap * 60 * Math.log(ran01());
 	}
 
@@ -286,27 +287,27 @@ public class PingService extends Service {
 	// NB: this has the side effect of changing the RNG state ($seed)
 	// and so should only be called once per next ping to calculate,
 	// after calling prevping.
-	public static long nextping(long prev, int gap) {
+	public long nextping(long prev, int gap) {
 		if (Constants.DEBUG) return now() + 60;
 		return Math.max(prev + 1, Math.round(prev + exprand(gap)));
 	}
 
 	// Computes the last scheduled ping time before time t.
-	public static long prevping(long t, int gap) {
-		SEED = INITSEED;
+	public long prevping(long t, int gap) {
+		mSeed = INITSEED;
 		// Starting at the beginning of time, walk forward computing next pings
 		// until the next ping is >= t.
 		final int TUES = 1261198800; // some random time more recent than that..
 		final int BOT = 1184083200; // start at the birth of timepie!
 		long nxt = Constants.DEBUG ? TUES : BOT;
 		long lst = nxt;
-		long lstseed = SEED;
+		long lstseed = mSeed;
 		while (nxt < t) {
 			lst = nxt;
-			lstseed = SEED;
+			lstseed = mSeed;
 			nxt = nextping(nxt, gap);
 		}
-		SEED = lstseed;
+		mSeed = lstseed;
 		return lst;
 	}
 
