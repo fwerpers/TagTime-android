@@ -50,8 +50,8 @@ public class PingService extends Service {
 	private int mGap;
 
 	// seed is a variable that is really the state of the RNG.
-	private static long mSeed;
-	private static long mNext;
+	private long mSeed;
+	private long mNext;
 
 	private static final long RETROTHRESH = 60;
 	private PowerManager.WakeLock mWakeLock;
