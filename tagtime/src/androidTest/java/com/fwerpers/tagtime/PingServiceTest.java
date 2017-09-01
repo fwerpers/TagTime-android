@@ -94,5 +94,23 @@ public class PingServiceTest {
         assertNotEquals(next, -1);
     }
 
+    @Test
+    public void comboTest() throws TimeoutException {
+        Intent serviceIntent = new Intent(getTargetContext(), PingService.class);
 
+        // Test 1
+        long nextBefore = SharedPrefUtil.getNextPingTime();
+        long seedBefore = SharedPrefUtil.getSeed();
+        assertEquals(-1, nextBefore);
+        assertEquals(-1, seedBefore);
+        mServiceRule.startService(serviceIntent);
+        assertNotEquals(next, -1);
+
+        // Test 2
+        long nextPingTime = PingService.now() + 60*60*24;
+        SharedPrefUtil.setNextPingTime(nextPingTime);
+        mServiceRule.startService(serviceIntent);
+        long next = SharedPrefUtil.getNextPingTime();
+        assertEquals(nextPingTime, next);
+    }
 }
