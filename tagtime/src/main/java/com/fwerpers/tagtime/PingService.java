@@ -105,17 +105,13 @@ public class PingService extends Service {
 
 		mNext = mPrefs.getLong(KEY_NEXT, -1);
 		mSeed = mPrefs.getLong(KEY_SEED, -1);
+		mGap = SharedPrefUtil.getPingGap();
+
+		Log.d("DEBUG", "mNext at start: "+mGap);
 
 		timeGenerator = new RandomTimeGenerator(mSeed);
 
 		Log.d("DEBUG", "mNext at start: "+mNext);
-
-		try {
-			mGap = Integer.parseInt(mPrefs.getString("pingGap", "5"));
-		} catch (NumberFormatException e) {
-			Log.w(TAG, "onCreate: Invalid gap: " + mPrefs.getString("pingGap", "not set"));
-			mGap = 5;
-		}
 
 		// First do a quick check to see if next ping is still in the future...
 		if (mNext > launchTime) {
