@@ -207,7 +207,7 @@ public class ManageData extends AppCompatActivity {
 	}
 
 	private void cleanupUnusedTags() {
-		mDb.cleanupUnusedTags();
+		mDb.deleteUnusedTags();
 	}
 
 	private Dialog progressDialog() {

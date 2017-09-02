@@ -584,7 +584,7 @@ public class PingsDbAdapter {
 	}
 
 	/** Cleans up the tags database, removing all unused tags */
-	public void cleanupUnusedTags() {
+	public void deleteUnusedTags() {
 
 		Cursor c = fetchAllTags();
 		c.moveToFirst();
@@ -598,10 +598,10 @@ public class PingsDbAdapter {
 			int usecount = tids.getCount();
 			tids.close();
 
-			if (LOCAL_LOGV) Log.v(TAG, "cleanupUnusedTags: tag " + c.getString(tagIdx) + " is used " + usecount
+			if (LOCAL_LOGV) Log.v(TAG, "deleteUnusedTags: tag " + c.getString(tagIdx) + " is used " + usecount
 					+ " times");
 			if (usecount == 0) {
-				if (LOCAL_LOGV) Log.i(TAG, "cleanupUnusedTags: removing tag " + c.getString(tagIdx)
+				if (LOCAL_LOGV) Log.i(TAG, "deleteUnusedTags: removing tag " + c.getString(tagIdx)
 						+ " noone is using it.");
 				mDb.delete(TAGS_TABLE, KEY_ROWID + "=" + tagid, null);
 			}
