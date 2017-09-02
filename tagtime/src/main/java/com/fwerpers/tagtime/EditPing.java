@@ -399,7 +399,7 @@ public class EditPing extends AppCompatActivity {
 					if (t.trim().length() == 0) continue;
 
 					if (LOCAL_LOGV) Log.v(TAG, "saveState: Storing tag \"" + t + "\"");
-					mPingsDB.getOrMakeNewTID(t);
+					mPingsDB.getOrInsertTag(t);
 				}
 			}
 		} else {

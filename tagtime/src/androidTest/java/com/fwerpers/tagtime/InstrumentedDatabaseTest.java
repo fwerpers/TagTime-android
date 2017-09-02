@@ -38,7 +38,7 @@ public class InstrumentedDatabaseTest {
     @Test
     public void testTagInsert() throws Exception {
         String newTag = "testTag";
-        mPingsAdapter.newTag(newTag);
+        mPingsAdapter.insertTag(newTag);
         Cursor tagCursor = mPingsAdapter.fetchAllTags();
         assertTrue(tagCursor.getCount() == 1);
         tagCursor.moveToFirst();

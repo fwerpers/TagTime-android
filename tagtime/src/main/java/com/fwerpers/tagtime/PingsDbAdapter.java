@@ -249,8 +249,8 @@ public class PingsDbAdapter {
 	 * Attempts to create a new tag, throwing an exception if a tag with the
 	 * same String already exists
 	 */
-	public long newTag(String tag) throws SQLException {
-		if (LOCAL_LOGV) Log.v(TAG, "newTag(" + tag + ")");
+	public long insertTag(String tag) throws SQLException {
+		if (LOCAL_LOGV) Log.v(TAG, "insertTag(" + tag + ")");
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_TAG, tag);
 		initialValues.put(KEY_USED_CACHE, 0);
@@ -261,12 +261,12 @@ public class PingsDbAdapter {
 	 * Attempts to retrieve the id for the given tag String. If not found,
 	 * creates a new one in the tags table and returns its ID.
 	 */
-	public long getOrMakeNewTID(String tag) {
+	public long getOrInsertTag(String tag) {
 		long tid;
 		try {
-			tid = newTag(tag);
+			tid = insertTag(tag);
 		} catch (SQLException e) {
-			tid = getTID(tag);
+			tid = getTagId(tag);
 		}
 		return tid;
 	}
@@ -293,19 +293,19 @@ public class PingsDbAdapter {
 	 * @param tag
 	 * @return tag_id of tag or -1 if tag does not exist
 	 */
-	public long getTID(String tag) {
-		if (LOCAL_LOGV) Log.v(TAG, "getTID(" + tag + ")");
+	private long getTagId(String tag) {
+		if (LOCAL_LOGV) Log.v(TAG, "getTagId(" + tag + ")");
 		// return -1 if not found
-		long tid = -1;
+		long tagId = -1;
 		Cursor cursor = mDb.query(TAGS_TABLE, new String[] { KEY_ROWID, KEY_TAG }, KEY_TAG + "='" + tag + "'", null,
 				null, null, null, null);
-		if (LOCAL_LOGV) Log.v(TAG, "getTID: queried for tag=" + tag);
+		if (LOCAL_LOGV) Log.v(TAG, "getTagId: queried for tag=" + tag);
 		if (cursor.getCount() > 0) {
 			cursor.moveToFirst();
-			tid = cursor.getLong(cursor.getColumnIndex(KEY_ROWID));
+			tagId = cursor.getLong(cursor.getColumnIndex(KEY_ROWID));
 		}
 		cursor.close();
-		return tid;
+		return tagId;
 	}
 
 	/**
@@ -343,8 +343,8 @@ public class PingsDbAdapter {
 	 * @return true if update is successful.
 	 */
 	public boolean updateTag(String oldtag, String newtag) throws Exception {
-		long tagid = getTID(oldtag);
-		long tnewid = getTID(newtag);
+		long tagid = getTagId(oldtag);
+		long tnewid = getTagId(newtag);
 		if (tnewid != -1) {
 			Exception e = new Exception("newtag exists already");
 			throw e;
@@ -406,7 +406,7 @@ public class PingsDbAdapter {
 	 * database.
 	 */
 	public boolean deleteTagPing(long pingid, String tag) {
-		return deleteTagPing(pingid, getTID(tag));
+		return deleteTagPing(pingid, getTagId(tag));
 	}
 
 	/** Removes the pair with the supplied ping and tag ids from the database. */
@@ -462,10 +462,10 @@ public class PingsDbAdapter {
 			c.moveToFirst();
 			int idx = c.getColumnIndex(KEY_TID);
 			while (!c.isAfterLast()) {
-				long tid = c.getLong(idx);
-				String t = getTagName(tid);
+				long tagId = c.getLong(idx);
+				String t = getTagName(tagId);
 				if (t.equals("")) {
-					Exception e = new Exception("Could not find tag with id=" + tid);
+					Exception e = new Exception("Could not find tag with id=" + tagId);
 					throw e;
 				}
 				s += t + " ";
@@ -491,10 +491,10 @@ public class PingsDbAdapter {
 		c.moveToFirst();
 		int idx = c.getColumnIndex(KEY_TID);
 		while (!c.isAfterLast()) {
-			long tid = c.getLong(idx);
-			String t = getTagName(tid);
+			long tagId = c.getLong(idx);
+			String t = getTagName(tagId);
 			if (t.equals("")) {
-				Exception e = new Exception("Could not find tag with id=" + tid);
+				Exception e = new Exception("Could not find tag with id=" + tagId);
 				throw e;
 			}
 			ret.add(t);
@@ -507,12 +507,12 @@ public class PingsDbAdapter {
 	/**
 	 * Fetch a list of the tag ids as a list of longs.
 	 * 
-	 * @param pingid
+	 * @param pingId
 	 *            the ID of the ping
 	 * @return a list of longs including tag ids for the indicated ping
 	 */
-	public List<Long> fetchTagsForPing(long pingid) throws Exception {
-		Cursor c = fetchTaggings(pingid, KEY_PID);
+	public List<Long> fetchTagsForPing(long pingId) throws Exception {
+		Cursor c = fetchTaggings(pingId, KEY_PID);
 		List<Long> ret = new ArrayList<Long>();
 		c.moveToFirst();
 		int idx = c.getColumnIndex(KEY_TID);
@@ -525,14 +525,14 @@ public class PingsDbAdapter {
 	}
 
 	/** Updates usage counts for a specific tag in the database */
-	public void updateTagCache(long tid) {
+	public void updateTagCache(long tagId) {
 		Cursor count_cr = mDb.rawQuery("SELECT COUNT(_id) FROM tag_ping WHERE tag_id = ?",
-				new String[] { Long.toString(tid) });
+				new String[] { Long.toString(tagId) });
 		count_cr.moveToFirst();
 		ContentValues uses_values = new ContentValues();
 		uses_values.put(KEY_USED_CACHE, count_cr.getInt(0));
 		count_cr.close();
-		mDb.update(TAGS_TABLE, uses_values, "_id = ?", new String[] { Long.toString(tid) });
+		mDb.update(TAGS_TABLE, uses_values, "_id = ?", new String[] { Long.toString(tagId) });
 	}
 
 	/**
@@ -540,8 +540,8 @@ public class PingsDbAdapter {
 	 */
 	public void updateTagCaches() {
 		long[] tagIds = getAllTagIds();
-		for (long tid : tagIds) {
-			updateTagCache(tid);
+		for (long tagId : tagIds) {
+			updateTagCache(tagId);
 		}
 	}
 
@@ -567,18 +567,18 @@ public class PingsDbAdapter {
 		// Now, insert new taggings
 		for (String t : newTags) {
 			if (t.trim().length() == 0) continue;
-			long tid = getOrMakeNewTID(t);
-			if (tid == -1) Log.e(TAG, "updatePingTags: ERROR: about to insert tid -1");
+			long tagId = getOrInsertTag(t);
+			if (tagId == -1) Log.e(TAG, "updatePingTags: ERROR: about to insert tid -1");
 			try {
-				newTagPing(pingid, tid);
+				newTagPing(pingid, tagId);
 			} catch (Exception e) {
-				Log.w(TAG, "updatePingTags: error inserting newTagPing(" + pingid + "," + tid + ") in updatePingTags()");
+				Log.w(TAG, "updatePingTags: error inserting newTagPing(" + pingid + "," + tagId + ") in updatePingTags()");
 			}
 		}
 
 		// Update usage counts for all tags affected
 		for (String tag : cacheUpdates) {
-			updateTagCache(getTID(tag));
+			updateTagCache(getTagId(tag));
 		}
 		return true;
 	}
@@ -593,10 +593,10 @@ public class PingsDbAdapter {
 		while (!c.isAfterLast()) {
 			long tagid = c.getLong(idx);
 			// Check ping tag pairs
-			Cursor tids = mDb.query(TAG_PING_TABLE, new String[] { KEY_ROWID }, KEY_TID + "=" + tagid, null, null,
+			Cursor tagIdCursor = mDb.query(TAG_PING_TABLE, new String[] { KEY_ROWID }, KEY_TID + "=" + tagid, null, null,
 					null, null);
-			int usecount = tids.getCount();
-			tids.close();
+			int usecount = tagIdCursor.getCount();
+			tagIdCursor.close();
 
 			if (LOCAL_LOGV) Log.v(TAG, "deleteUnusedTags: tag " + c.getString(tagIdx) + " is used " + usecount
 					+ " times");
@@ -620,7 +620,7 @@ public class PingsDbAdapter {
 	public int getNumberOfPingsWithTags(List<String> tags) {
 		List<String> tagIdStrings = new ArrayList<String>();
 		for (String tag : tags) {
-			tagIdStrings.add(String.valueOf(getTID(tag)));
+			tagIdStrings.add(String.valueOf(getTagId(tag)));
 		}
  		String tagIdListString = TextUtils.join(",", Collections.nCopies(tags.size(), "?"));
 
