@@ -382,7 +382,7 @@ public class PingsDbAdapter {
 	 * Attempts to create a new ping/tag pair, throwing an exception if an
 	 * identical one already exists
 	 */
-	public long newTagPing(long pingid, long tagid) throws Exception {
+	private long newTagPing(long pingid, long tagid) throws Exception {
 		ContentValues init = new ContentValues();
 		init.put(KEY_PID, pingid);
 		init.put(KEY_TID, tagid);
@@ -410,7 +410,7 @@ public class PingsDbAdapter {
 	}
 
 	/** Removes the pair with the supplied ping and tag ids from the database. */
-	public boolean deleteTagPing(long pingid, long tagid) {
+	private boolean deleteTagPing(long pingid, long tagid) {
 		String query = KEY_PID + "=" + pingid + " AND " + KEY_TID + "=" + tagid;
 		return mDb.delete(TAG_PING_TABLE, query, null) > 0;
 	}
@@ -424,7 +424,7 @@ public class PingsDbAdapter {
 	 *            Column key to indicate whether the supplied ID is a ping id or
 	 *            a tag id.
 	 */
-	public Cursor fetchTaggings(long id, String col_key) {
+	private Cursor fetchTaggings(long id, String col_key) {
 		return mDb.query(true, TAG_PING_TABLE, new String[] { KEY_PID, KEY_TID }, col_key + " = " + id, null, null,
 				null, null, null);
 	}
