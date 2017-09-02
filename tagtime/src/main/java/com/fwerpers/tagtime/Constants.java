@@ -7,6 +7,6 @@ package com.fwerpers.tagtime;
 public class Constants {
     public static final String ACTION_GAP_CHANGED = "com.fwerpers.timeprof.ACTION_GAP_CHANGED";
     public static final String KEY_RUNNING = "running";
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final boolean DEBUG_DATABASE_FREEZE = false;
 }
