@@ -2,7 +2,6 @@ package com.fwerpers.tagtime;
 
 import android.database.Cursor;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +53,7 @@ public class InstrumentedDatabaseTest {
         String newNotes = "hejhopp";
         List<String> newTags = Arrays.asList(new String[] { "OFF" });
         int newPeriod = 45;
-        long pid = mPingsAdapter.createPing(newTime, newNotes, newTags, newPeriod);
+        long pid = mPingsAdapter.insertPingWithTags(newTime, newNotes, newTags, newPeriod);
         List<String> tags = mPingsAdapter.fetchTagNamesForPing(pid);
         assertEquals(tags, newTags);
     }

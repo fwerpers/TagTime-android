@@ -185,14 +185,14 @@ public class PingsDbAdapter {
 	 * Creates a ping with the supplied time and notes. Also creates ping/tag
 	 * pairs corresponding to the given tag list.
 	 */
-	public long createPing(long pingtime, String notes, List<String> tags, int period) {
-		if (LOCAL_LOGV) Log.v(TAG, "createPing()");
-		long pid = insertPing(pingtime, notes, period);
-		if (!updateTaggings(pid, tags)) {
-			Log.e(TAG, "createPing: error creating the tag-ping entries");
+	public long insertPingWithTags(long pingtime, String notes, List<String> tags, int period) {
+		if (LOCAL_LOGV) Log.v(TAG, "insertPingWithTags()");
+		long pingId = insertPing(pingtime, notes, period);
+		if (!updatePingTags(pingId, tags)) {
+			Log.e(TAG, "insertPingWithTags: error creating the tag-ping entries");
 		}
 		TagTime.broadcastPingUpdate( true );
-		return pid;
+		return pingId;
 	}
 
 	/** Internal function to insert a new ping into the pings table */
@@ -548,8 +548,8 @@ public class PingsDbAdapter {
 	/**
 	 * Updates the taggings of the ping pingid to be equal to newTags.
 	 */
-	public boolean updateTaggings(long pingid, List<String> newTags) {
-		if (LOCAL_LOGV) Log.v(TAG, "updateTaggings(" + pingid + ")");
+	public boolean updatePingTags(long pingid, List<String> newTags) {
+		if (LOCAL_LOGV) Log.v(TAG, "updatePingTags(" + pingid + ")");
 
 		// Remove all the old tags.
 		mDb.delete(TAG_PING_TABLE, KEY_PID + "=" + pingid, null);
@@ -559,7 +559,7 @@ public class PingsDbAdapter {
 		try {
 			cacheUpdates = fetchTagNamesForPing(pingid);
 		} catch (Exception e) {
-			Log.w(TAG, "updateTaggings: Some problem getting tags for this ping!");
+			Log.w(TAG, "updatePingTags: Some problem getting tags for this ping!");
 			e.printStackTrace();
 		}
 		cacheUpdates.addAll(newTags);
@@ -568,11 +568,11 @@ public class PingsDbAdapter {
 		for (String t : newTags) {
 			if (t.trim().length() == 0) continue;
 			long tid = getOrMakeNewTID(t);
-			if (tid == -1) Log.e(TAG, "updateTaggings: ERROR: about to insert tid -1");
+			if (tid == -1) Log.e(TAG, "updatePingTags: ERROR: about to insert tid -1");
 			try {
 				newTagPing(pingid, tid);
 			} catch (Exception e) {
-				Log.w(TAG, "updateTaggings: error inserting newTagPing(" + pingid + "," + tid + ") in updateTaggings()");
+				Log.w(TAG, "updatePingTags: error inserting newTagPing(" + pingid + "," + tid + ") in updatePingTags()");
 			}
 		}
 

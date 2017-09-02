@@ -173,7 +173,7 @@ public class PingService extends Service {
 
 	private long logPing(long time, String notes, List<String> tags) {
 		if (LOCAL_LOGV) Log.v(TAG, "logPing(" + tags + ")");
-		return pingsDB.createPing(time, notes, tags, mGap);
+		return pingsDB.insertPingWithTags(time, notes, tags, mGap);
 	}
 
 	// ////////////////////////////////////////////////////////////////////

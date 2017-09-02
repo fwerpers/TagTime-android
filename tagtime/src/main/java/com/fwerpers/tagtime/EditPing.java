@@ -393,7 +393,7 @@ public class EditPing extends AppCompatActivity {
 			String[] newtagstrings = mTagsEdit.getText().toString().trim().split("\\s+");
 			mCurrentTags = new ArrayList<String>(Arrays.asList(newtagstrings));
 			mCurrentTagString = TextUtils.join(" ", mCurrentTags);
-			if (mRowId >= 0) mPingsDB.updateTaggings(mRowId, Arrays.asList(newtagstrings));
+			if (mRowId >= 0) mPingsDB.updatePingTags(mRowId, Arrays.asList(newtagstrings));
 			else {
 				for (String t : mCurrentTags) {
 					if (t.trim().length() == 0) continue;
@@ -404,7 +404,7 @@ public class EditPing extends AppCompatActivity {
 			}
 		} else {
 			if (mRowId >= 0) {
-				mPingsDB.updateTaggings(mRowId, mCurrentTags);
+				mPingsDB.updatePingTags(mRowId, mCurrentTags);
 			} else {
 				// Nothing, onSaveInstanceState will take care of saving the
 				// current tags for orientation change
